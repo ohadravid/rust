@@ -168,8 +168,7 @@ impl<T> ToOwned for T
 /// }
 /// ```
 #[stable(feature = "rust1", since = "1.0.0")]
-pub enum Cow<'a, B: ?Sized + 'a>
-    where B: ToOwned
+pub enum Cow<'a, B: ?Sized + 'a, O = <B as ToOwned>::Owned>
 {
     /// Borrowed data.
     #[stable(feature = "rust1", since = "1.0.0")]
@@ -179,7 +178,7 @@ pub enum Cow<'a, B: ?Sized + 'a>
     /// Owned data.
     #[stable(feature = "rust1", since = "1.0.0")]
     Owned(#[stable(feature = "rust1", since = "1.0.0")]
-          <B as ToOwned>::Owned),
+          O),
 }
 
 #[stable(feature = "rust1", since = "1.0.0")]
