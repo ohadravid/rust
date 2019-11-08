@@ -465,7 +465,8 @@ pub fn print_inlined_const(cx: &DocContext<'_>, did: DefId) -> String {
 fn build_const(cx: &DocContext<'_>, did: DefId) -> clean::Constant {
     clean::Constant {
         type_: cx.tcx.type_of(did).clean(cx),
-        expr: print_inlined_const(cx, did)
+        expr: print_inlined_const(cx, did),
+        value: clean::print_evaluated_const(cx, did),
     }
 }
 

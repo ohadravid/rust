@@ -2287,11 +2287,22 @@ fn short_stability(item: &clean::Item, cx: &Context) -> Vec<String> {
 fn item_constant(w: &mut Buffer, cx: &Context, it: &clean::Item, c: &clean::Constant) {
     write!(w, "<pre class='rust const'>");
     render_attributes(w, it, false);
+
     write!(w, "{vis}const \
-               {name}: {typ}</pre>",
+               {name}: {typ} = {expr};",
            vis = it.visibility.print_with_space(),
            name = it.name.as_ref().unwrap(),
-           typ = c.type_.print());
+           typ = c.type_.print(),
+           expr = c.expr,
+    );
+
+    if let Some(value) = &c.value {
+        if value != &c.expr {
+            write!(w, " /* {value} */", value = value);
+        }
+    }
+
+    write!(w, "</pre>");
     document(w, cx, it)
 }
 

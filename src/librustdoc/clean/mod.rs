@@ -16,7 +16,7 @@ use rustc::infer::region_constraints::{RegionConstraintData, Constraint};
 use rustc::middle::resolve_lifetime as rl;
 use rustc::middle::lang_items;
 use rustc::middle::stability;
-use rustc::mir::interpret::GlobalId;
+use rustc::mir::interpret::{GlobalId, ConstValue, Scalar, sign_extend};
 use rustc::hir;
 use rustc::hir::def::{CtorKind, DefKind, Res};
 use rustc::hir::def_id::{CrateNum, DefId, CRATE_DEF_INDEX, LOCAL_CRATE};
@@ -1300,6 +1300,7 @@ impl Clean<Constant> for hir::ConstArg {
         Constant {
             type_: cx.tcx.type_of(cx.tcx.hir().body_owner_def_id(self.value.body)).clean(cx),
             expr: print_const_expr(cx, self.value.body),
+            value: None,
         }
     }
 }
@@ -3274,6 +3275,7 @@ impl<'tcx> Clean<Constant> for ty::Const<'tcx> {
         Constant {
             type_: self.ty.clean(cx),
             expr: format!("{}", self),
+            value: None,
         }
     }
 }
@@ -3831,21 +3833,24 @@ impl Clean<Item> for doctree::Static<'_> {
 pub struct Constant {
     pub type_: Type,
     pub expr: String,
+    pub value: Option<String>,
 }
 
 impl Clean<Item> for doctree::Constant<'_> {
     fn clean(&self, cx: &DocContext<'_>) -> Item {
+        let def_id = cx.tcx.hir().local_def_id(self.id);
         Item {
             name: Some(self.name.clean(cx)),
             attrs: self.attrs.clean(cx),
             source: self.whence.clean(cx),
-            def_id: cx.tcx.hir().local_def_id(self.id),
+            def_id: def_id,
             visibility: self.vis.clean(cx),
             stability: cx.stability(self.id).clean(cx),
             deprecation: cx.deprecation(self.id).clean(cx),
             inner: ConstantItem(Constant {
                 type_: self.type_.clean(cx),
                 expr: print_const_expr(cx, self.expr),
+                value: print_evaluated_const(cx, def_id),
             }),
         }
     }
@@ -4229,6 +4234,50 @@ fn name_from_pat(p: &hir::Pat) -> String {
             let end = end.iter().map(|p| name_from_pat(&**p));
             format!("[{}]", begin.chain(mid).chain(end).collect::<Vec<_>>().join(", "))
         },
+    }
+}
+
+pub fn print_evaluated_const(cx: &DocContext<'_>, def_id: DefId) -> Option<String> {
+    let param_env = cx.tcx.param_env(def_id);
+    let substs = InternalSubsts::identity_for_item(cx.tcx, def_id);
+    let cid = GlobalId {
+        instance: ty::Instance::new(def_id, substs),
+        promoted: None
+    };
+
+    let value = cx.tcx.const_eval(param_env.and(cid)).ok().and_then(|value| {
+        match (value.val, &value.ty.kind) {
+            (_, ty::Ref(..)) => None,
+            (ty::ConstKind::Value(ConstValue::Scalar(_)), _) =>
+                Some(print_const_with_custom_print_scalar(cx, value)),
+            _ => None,
+        }
+    });
+
+    value
+}
+
+fn print_const_with_custom_print_scalar(cx: &DocContext<'_>, ct: &'tcx ty::Const<'tcx>) -> String {
+    // Use a slightly different format for integer types which always shows the actual value.
+    // For all other types, fallback to the original `pretty_print_const`.
+    match (ct.val, &ct.ty.kind) {
+        (ty::ConstKind::Value(ConstValue::Scalar(Scalar::Raw { data, .. })), ty::Uint(ui)) => {
+            let ui_str = ui.name_str();
+            format!("{}{}", data, ui_str)
+        },
+        (ty::ConstKind::Value(ConstValue::Scalar(Scalar::Raw { data, .. })), ty::Int(i)) => {
+            let ty = cx.tcx.lift(&ct.ty).unwrap();
+            let size = cx.tcx.layout_of(ty::ParamEnv::empty().and(ty))
+                .unwrap()
+                .size;
+            let i_str = i.name_str();
+            let sign_extended_data = sign_extend(data, size) as i128;
+
+            format!("{}{}", sign_extended_data, i_str)
+        },
+        _ => {
+            ct.to_string()
+        }
     }
 }
 
