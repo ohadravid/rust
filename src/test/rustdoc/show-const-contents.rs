@@ -4,8 +4,13 @@
 // @has show_const_contents/constant.CONST_S.html 'show this'
 pub const CONST_S: &'static str = "show this";
 
-// @has show_const_contents/constant.CONST_I32.html '= 42; /* 42i32 */'
+// @has show_const_contents/constant.CONST_I32.html '= 42;'
+// @!has show_const_contents/constant.CONST_I32.html '; /*'
 pub const CONST_I32: i32 = 42;
+
+// @has show_const_contents/constant.CONST_NEG_I32.html '= -42;'
+// @!has show_const_contents/constant.CONST_NEG_I32.html '; /*'
+pub const CONST_NEG_I32: i32 = -42;
 
 // @has show_const_contents/constant.CONST_EQ_TO_VALUE_I32.html '= 42i32;'
 // @!has show_const_contents/constant.CONST_EQ_TO_VALUE_I32.html '/* 42i32 */'
@@ -26,4 +31,11 @@ pub const UNIT: () = ();
 pub struct MyType(i32);
 
 // @has show_const_contents/constant.MY_TYPE.html '= MyType(42);'
+// @!has show_const_contents/constant.MY_TYPE.html '; /*'
 pub const MY_TYPE: MyType = MyType(42);
+
+pub struct MyTypeWithStr(&'static str);
+
+// @has show_const_contents/constant.MY_TYPE_WITH_STR.html '= MyTypeWithStr("show this");'
+// @!has show_const_contents/constant.MY_TYPE_WITH_STR.html '; /*'
+pub const MY_TYPE_WITH_STR: MyTypeWithStr = MyTypeWithStr("show this");

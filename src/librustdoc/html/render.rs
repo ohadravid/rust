@@ -2297,7 +2297,7 @@ fn item_constant(w: &mut Buffer, cx: &Context, it: &clean::Item, c: &clean::Cons
     );
 
     if let Some(value) = &c.value {
-        if value != &c.expr {
+        if value.to_lowercase() != c.expr.to_lowercase() && !c.is_literal {
             write!(w, " /* {value} */", value = value);
         }
     }

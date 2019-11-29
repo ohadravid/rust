@@ -1301,6 +1301,7 @@ impl Clean<Constant> for hir::ConstArg {
             type_: cx.tcx.type_of(cx.tcx.hir().body_owner_def_id(self.value.body)).clean(cx),
             expr: print_const_expr(cx, self.value.body),
             value: None,
+            is_literal: is_literal_expr(cx, self.value.body.hir_id),
         }
     }
 }
@@ -3276,6 +3277,7 @@ impl<'tcx> Clean<Constant> for ty::Const<'tcx> {
             type_: self.ty.clean(cx),
             expr: format!("{}", self),
             value: None,
+            is_literal: false,
         }
     }
 }
@@ -3834,11 +3836,13 @@ pub struct Constant {
     pub type_: Type,
     pub expr: String,
     pub value: Option<String>,
+    pub is_literal: bool,
 }
 
 impl Clean<Item> for doctree::Constant<'_> {
     fn clean(&self, cx: &DocContext<'_>) -> Item {
         let def_id = cx.tcx.hir().local_def_id(self.id);
+
         Item {
             name: Some(self.name.clean(cx)),
             attrs: self.attrs.clean(cx),
@@ -3851,6 +3855,7 @@ impl Clean<Item> for doctree::Constant<'_> {
                 type_: self.type_.clean(cx),
                 expr: print_const_expr(cx, self.expr),
                 value: print_evaluated_const(cx, def_id),
+                is_literal: is_literal_expr( cx, self.expr.hir_id),
             }),
         }
     }
@@ -4248,6 +4253,7 @@ pub fn print_evaluated_const(cx: &DocContext<'_>, def_id: DefId) -> Option<Strin
     let value = cx.tcx.const_eval(param_env.and(cid)).ok().and_then(|value| {
         match (value.val, &value.ty.kind) {
             (_, ty::Ref(..)) => None,
+            (ty::ConstKind::Value(ConstValue::Scalar(_)), ty::Adt(_, _)) => None,
             (ty::ConstKind::Value(ConstValue::Scalar(_)), _) =>
                 Some(print_const_with_custom_print_scalar(cx, value)),
             _ => None,
@@ -4308,6 +4314,22 @@ fn print_const(cx: &DocContext<'_>, n: &ty::Const<'_>) -> String {
 
 fn print_const_expr(cx: &DocContext<'_>, body: hir::BodyId) -> String {
     cx.tcx.hir().hir_to_pretty_string(body.hir_id)
+}
+
+fn is_literal_expr(cx: &DocContext<'_>, hir_id: hir::HirId) -> bool {
+    if let hir::Node::Expr(expr) = cx.tcx.hir().get(hir_id) {
+        if let hir::ExprKind::Lit(_) = &expr.kind {
+            return true;
+        }
+
+        if let hir::ExprKind::Unary(hir::UnOp::UnNeg, expr) = &expr.kind {
+            if let hir::ExprKind::Lit(_) = &expr.kind {
+                return true;
+            }
+        }
+    }
+
+    false
 }
 
 /// Given a type Path, resolve it to a Type using the TyCtxt

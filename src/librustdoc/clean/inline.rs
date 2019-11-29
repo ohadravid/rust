@@ -467,6 +467,9 @@ fn build_const(cx: &DocContext<'_>, did: DefId) -> clean::Constant {
         type_: cx.tcx.type_of(did).clean(cx),
         expr: print_inlined_const(cx, did),
         value: clean::print_evaluated_const(cx, did),
+        is_literal: cx.tcx.hir().as_local_hir_id(did).map(
+            |hir_id| clean::is_literal_expr(cx, hir_id)
+        ).unwrap_or(false),
     }
 }
 
