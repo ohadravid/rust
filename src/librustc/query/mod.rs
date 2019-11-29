@@ -535,9 +535,10 @@ rustc_queries! {
 
     Other {
         query fn_arg_names(_: DefId) -> Vec<ast::Name> {}
-        /// Gets the rendered value of the specified constant or associated constant.
+        /// Gets the rendered value of the specified constant or associated constant, and whether
+        /// of not it is a simple literal.
         /// Used by rustdoc.
-        query rendered_const(_: DefId) -> String {}
+        query rendered_const(_: DefId) -> (String, bool) {}
         query impl_parent(_: DefId) -> Option<DefId> {}
     }
 

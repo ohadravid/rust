@@ -828,7 +828,7 @@ impl EncodeContext<'tcx> {
             ty::AssocKind::Const => {
                 let rendered =
                     hir::print::to_string(self.tcx.hir(), |s| s.print_trait_item(ast_item));
-                let rendered_const = self.lazy(RenderedConst(rendered));
+                let rendered_const = self.lazy(RenderedConst { value: rendered, is_literal: false });
 
                 EntryKind::AssocConst(
                     container,
@@ -1036,7 +1036,22 @@ impl EncodeContext<'tcx> {
     fn encode_rendered_const_for_body(&mut self, body_id: hir::BodyId) -> Lazy<RenderedConst> {
         let body = self.tcx.hir().body(body_id);
         let rendered = hir::print::to_string(self.tcx.hir(), |s| s.print_expr(&body.value));
-        let rendered_const = &RenderedConst(rendered);
+        let is_literal = match &body.value.kind {
+            hir::ExprKind::Lit(_) => true,
+            hir::ExprKind::Unary(hir::UnOp::UnNeg, expr) => {
+                if let hir::ExprKind::Lit(_) = expr.kind {
+                    true
+                } else {
+                    false
+                }
+            },
+            _ => false,
+        };
+
+        let rendered_const = &RenderedConst {
+            value: rendered,
+            is_literal,
+        };
         self.lazy(rendered_const)
     }
 

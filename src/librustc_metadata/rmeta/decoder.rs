@@ -1324,10 +1324,13 @@ impl<'a, 'tcx> CrateMetadata {
         }
     }
 
-    fn get_rendered_const(&self, id: DefIndex) -> String {
+    fn get_rendered_const(&self, id: DefIndex) -> (String, bool) {
         match self.kind(id) {
             EntryKind::Const(_, data) |
-            EntryKind::AssocConst(_, _, data) => data.decode(self).0,
+            EntryKind::AssocConst(_, _, data) => {
+                let rendered_const = data.decode(self);
+                (rendered_const.value, rendered_const.is_literal)
+            },
             _ => bug!(),
         }
     }

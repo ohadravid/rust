@@ -317,7 +317,10 @@ enum EntryKind<'tcx> {
 /// Contains a constant which has been rendered to a String.
 /// Used by rustdoc.
 #[derive(RustcEncodable, RustcDecodable)]
-struct RenderedConst(String);
+struct RenderedConst {
+    value: String,
+    is_literal: bool,
+}
 
 #[derive(RustcEncodable, RustcDecodable)]
 struct ModData {

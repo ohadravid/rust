@@ -4318,18 +4318,20 @@ fn print_const_expr(cx: &DocContext<'_>, body: hir::BodyId) -> String {
 
 fn is_literal_expr(cx: &DocContext<'_>, hir_id: hir::HirId) -> bool {
     if let hir::Node::Expr(expr) = cx.tcx.hir().get(hir_id) {
-        if let hir::ExprKind::Lit(_) = &expr.kind {
-            return true;
+        match &expr.kind {
+            hir::ExprKind::Lit(_) => true,
+            hir::ExprKind::Unary(hir::UnOp::UnNeg, expr) => {
+                if let hir::ExprKind::Lit(_) = expr.kind {
+                    true
+                } else {
+                    false
+                }
+            },
+            _ => false,
         }
-
-        if let hir::ExprKind::Unary(hir::UnOp::UnNeg, expr) = &expr.kind {
-            if let hir::ExprKind::Lit(_) = &expr.kind {
-                return true;
-            }
-        }
+    } else {
+        false
     }
-
-    false
 }
 
 /// Given a type Path, resolve it to a Type using the TyCtxt

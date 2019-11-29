@@ -458,7 +458,15 @@ pub fn print_inlined_const(cx: &DocContext<'_>, did: DefId) -> String {
     if let Some(node_id) = cx.tcx.hir().as_local_hir_id(did) {
         cx.tcx.hir().hir_to_pretty_string(node_id)
     } else {
-        cx.tcx.rendered_const(did)
+        cx.tcx.rendered_const(did).0
+    }
+}
+
+pub fn is_const_a_literal(cx: &DocContext<'_>, did: DefId) -> bool {
+    if let Some(node_id) = cx.tcx.hir().as_local_hir_id(did) {
+        clean::is_literal_expr(cx, node_id)
+    } else {
+        cx.tcx.rendered_const(did).1
     }
 }
 
@@ -467,9 +475,7 @@ fn build_const(cx: &DocContext<'_>, did: DefId) -> clean::Constant {
         type_: cx.tcx.type_of(did).clean(cx),
         expr: print_inlined_const(cx, did),
         value: clean::print_evaluated_const(cx, did),
-        is_literal: cx.tcx.hir().as_local_hir_id(did).map(
-            |hir_id| clean::is_literal_expr(cx, hir_id)
-        ).unwrap_or(false),
+        is_literal: is_const_a_literal(cx, did),
     }
 }
 
