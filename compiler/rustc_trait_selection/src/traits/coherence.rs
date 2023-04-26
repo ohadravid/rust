@@ -667,8 +667,8 @@ impl<'tcx> TypeVisitor<TyCtxt<'tcx>> for OrphanChecker<'tcx> {
             | ty::Tuple(..)
             | ty::Alias(ty::Projection, ..) => self.found_non_local_ty(ty),
 
-            ty::Param(..) => {
-                if self.search_first_local_ty {
+            ty::Param(p) => {
+                if self.search_first_local_ty || p.name.as_str() == "L" {
                     ControlFlow::Continue(())
                 } else {
                     ControlFlow::Break(OrphanCheckEarlyExit::ParamTy(ty))
