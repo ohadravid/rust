@@ -631,14 +631,6 @@ impl<'tcx> OrphanChecker<'tcx> {
         ControlFlow::Continue(())
     }
 
-    fn found_param_ty(&mut self, t: Ty<'tcx>) -> ControlFlow<OrphanCheckEarlyExit<'tcx>> {
-        if self.search_first_local_ty {
-            ControlFlow::Continue(())
-        } else {
-            ControlFlow::Break(OrphanCheckEarlyExit::ParamTy(t))
-        }
-    }
-
     fn def_id_is_local(&mut self, def_id: DefId) -> bool {
         match self.in_crate {
             InCrate::Local => def_id.is_local(),
@@ -675,7 +667,13 @@ impl<'tcx> TypeVisitor<TyCtxt<'tcx>> for OrphanChecker<'tcx> {
             | ty::Tuple(..)
             | ty::Alias(ty::Projection, ..) => self.found_non_local_ty(ty),
 
-            ty::Param(..) => self.found_param_ty(ty),
+            ty::Param(..) => {
+                if self.search_first_local_ty {
+                    ControlFlow::Continue(())
+                } else {
+                    ControlFlow::Break(OrphanCheckEarlyExit::ParamTy(ty))
+                }
+            }
 
             ty::Placeholder(..) | ty::Bound(..) | ty::Infer(..) => match self.in_crate {
                 InCrate::Local => self.found_non_local_ty(ty),
