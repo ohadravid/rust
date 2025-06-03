@@ -77,7 +77,6 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
         StorageLive(_8);
         _8 = &_4;
         StorageLive(_10);
-        StorageLive(_9);
         _9 = copy _6;
         _10 = &_9;
         _11 = copy ((*_3).0: usize);
@@ -87,21 +86,18 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
     }
 
     bb1: {
-        StorageDead(_9);
         StorageDead(_10);
         StorageDead(_8);
         goto -> bb4;
     }
 
     bb2: {
-        StorageDead(_9);
         StorageDead(_10);
         StorageDead(_8);
         StorageLive(_19);
         StorageLive(_14);
         _14 = &_7;
         StorageLive(_16);
-        StorageLive(_15);
         _15 = copy _5;
         _16 = &_15;
         StorageLive(_17);
@@ -115,7 +111,6 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
     }
 
     bb3: {
-        StorageDead(_15);
         StorageDead(_16);
         StorageDead(_14);
         goto -> bb4;
@@ -126,7 +121,6 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
         StorageLive(_20);
         _20 = &_6;
         StorageLive(_22);
-        StorageLive(_21);
         _21 = copy _4;
         _22 = &_21;
         _23 = Le(copy _12, copy _11);
@@ -134,7 +128,6 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
     }
 
     bb5: {
-        StorageDead(_21);
         StorageDead(_22);
         StorageDead(_20);
         _0 = const false;
@@ -142,13 +135,11 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
     }
 
     bb6: {
-        StorageDead(_21);
         StorageDead(_22);
         StorageDead(_20);
         StorageLive(_24);
         _24 = &_5;
         StorageLive(_26);
-        StorageLive(_25);
         _25 = copy _7;
         _26 = &_25;
         StorageLive(_27);
@@ -158,7 +149,6 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
         _0 = Le(move _27, move _28);
         StorageDead(_28);
         StorageDead(_27);
-        StorageDead(_25);
         StorageDead(_26);
         StorageDead(_24);
         goto -> bb7;
@@ -170,7 +160,6 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
     }
 
     bb8: {
-        StorageDead(_15);
         StorageDead(_16);
         StorageDead(_14);
         _0 = const true;

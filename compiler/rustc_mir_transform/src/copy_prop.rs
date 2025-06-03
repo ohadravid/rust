@@ -16,7 +16,7 @@ use crate::ssa::SsaLocals;
 ///   _d = move? _c
 /// where each of the locals is only assigned once.
 ///
-/// We want to replace all those locals by `_a`, either copied or moved.
+/// We want to replace all those locals by `_a` (the "head"), either copied or moved.
 pub(super) struct CopyProp;
 
 impl<'tcx> crate::MirPass<'tcx> for CopyProp {
@@ -37,7 +37,8 @@ impl<'tcx> crate::MirPass<'tcx> for CopyProp {
         let mut storage_to_remove = DenseBitSet::new_empty(fully_moved.domain_size());
         for (local, &head) in ssa.copy_classes().iter_enumerated() {
             if local != head {
-                storage_to_remove.insert(head);
+                // Since we'll replace all local instances with head, we can remove it's storage.
+                storage_to_remove.insert(local);
             }
         }
 
