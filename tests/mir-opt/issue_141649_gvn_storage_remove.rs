@@ -1,0 +1,26 @@
+// skip-filecheck
+//@ test-mir-pass: GVN
+
+// EMIT_MIR issue_141649_gvn_storage_remove.main.GVN.diff
+fn main() {
+    struct S(usize, usize);
+    {
+        let s1 = S(1, 2);
+        drop(s1);
+    }
+    {
+        let s2 = S(3, 4);
+        drop(s2);
+    }
+
+    #[derive(Clone, Copy)]
+    struct C(usize, usize);
+    {
+        let c1 = C(1, 2);
+        drop(c1);
+    }
+    {
+        let c2 = C(3, 4);
+        drop(c2);
+    }
+}
