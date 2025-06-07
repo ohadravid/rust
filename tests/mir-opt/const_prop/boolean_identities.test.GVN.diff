@@ -19,8 +19,7 @@
       }
   
       bb0: {
--         StorageLive(_3);
-+         nop;
+          StorageLive(_3);
           StorageLive(_4);
           _4 = copy _2;
 -         _3 = BitOr(move _4, const true);
@@ -44,9 +43,8 @@
           StorageDead(_8);
           StorageDead(_7);
 -         StorageDead(_5);
--         StorageDead(_3);
 +         nop;
-+         nop;
+          StorageDead(_3);
           return;
       }
   }

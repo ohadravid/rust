@@ -51,11 +51,13 @@ fn vec_move(_1: Vec<impl Sized>) -> () {
     }
 
     bb6: {
+        StorageLive(_7);
         _7 = move ((_5 as Some).0: impl Sized);
         _8 = opaque::<impl Sized>(move _7) -> [return: bb7, unwind: bb9];
     }
 
     bb7: {
+        StorageDead(_7);
         StorageDead(_5);
         goto -> bb2;
     }

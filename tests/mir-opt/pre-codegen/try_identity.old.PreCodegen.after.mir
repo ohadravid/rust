@@ -25,8 +25,10 @@ fn old(_1: Result<T, E>) -> Result<T, E> {
     }
 
     bb2: {
+        StorageLive(_4);
         _4 = copy ((_1 as Err).0: E);
         _0 = copy _1;
+        StorageDead(_4);
         goto -> bb3;
     }
 

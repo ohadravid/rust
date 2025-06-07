@@ -143,7 +143,15 @@ impl<'tcx> crate::MirPass<'tcx> for GVN {
         // For each local that is reused (`y` above), we remove its storage statements do avoid any
         // difficulty. Those locals are SSA, so should be easy to optimize by LLVM without storage
         // statements.
-        StorageRemover { tcx, reused_locals: state.reused_locals }.visit_body_preserves_cfg(body);
+        StorageRemover {
+            tcx,
+            reused_locals: state.reused_locals,
+            locals: state.locals,
+            rev_locals: state.rev_locals,
+            storage_dead_locations: state.storage_dead_locations,
+            storage_live_locations: state.storage_live_locations,
+        }
+        .visit_body_preserves_cfg(body);
     }
 
     fn is_required(&self) -> bool {
@@ -233,6 +241,8 @@ struct VnState<'body, 'tcx> {
     /// Locals that are assigned that value.
     // This vector does not hold all the values of `VnIndex` that we create.
     rev_locals: IndexVec<VnIndex, SmallVec<[Local; 1]>>,
+    storage_live_locations: IndexVec<Local, Option<Location>>,
+    storage_dead_locations: IndexVec<Local, Option<Location>>,
     values: FxIndexSet<Value<'tcx>>,
     /// Values evaluated as constants if possible.
     evaluated: IndexVec<VnIndex, Option<OpTy<'tcx>>>,
@@ -269,6 +279,8 @@ impl<'body, 'tcx> VnState<'body, 'tcx> {
             local_decls,
             locals: IndexVec::from_elem(None, local_decls),
             rev_locals: IndexVec::with_capacity(num_values),
+            storage_live_locations: IndexVec::from_elem(None, local_decls),
+            storage_dead_locations: IndexVec::from_elem(None, local_decls),
             values: FxIndexSet::with_capacity_and_hasher(num_values, Default::default()),
             evaluated: IndexVec::with_capacity(num_values),
             next_opaque: 1,
@@ -1803,6 +1815,12 @@ impl<'tcx> MutVisitor<'tcx> for VnState<'_, 'tcx> {
                 }
             }
         }
+        if let StatementKind::StorageDead(l) = stmt.kind {
+            self.storage_dead_locations[l] = Some(location);
+        }
+        if let StatementKind::StorageLive(l) = stmt.kind {
+            self.storage_live_locations[l] = Some(location);
+        }
         self.super_statement(stmt, location);
     }
 
@@ -1831,6 +1849,10 @@ impl<'tcx> MutVisitor<'tcx> for VnState<'_, 'tcx> {
 struct StorageRemover<'tcx> {
     tcx: TyCtxt<'tcx>,
     reused_locals: DenseBitSet<Local>,
+    locals: IndexVec<Local, Option<VnIndex>>,
+    rev_locals: IndexVec<VnIndex, SmallVec<[Local; 1]>>,
+    storage_live_locations: IndexVec<Local, Option<Location>>,
+    storage_dead_locations: IndexVec<Local, Option<Location>>,
 }
 
 impl<'tcx> MutVisitor<'tcx> for StorageRemover<'tcx> {
@@ -1853,7 +1875,54 @@ impl<'tcx> MutVisitor<'tcx> for StorageRemover<'tcx> {
             StatementKind::StorageLive(l) | StatementKind::StorageDead(l)
                 if self.reused_locals.contains(l) =>
             {
-                stmt.make_nop()
+                if let Some(v) = self.locals[l]
+                    && let Some(local_dead_loc) = self.storage_dead_locations[l]
+                    && let Some(local_live_loc) = self.storage_live_locations[l]
+                    && self.rev_locals[v].len() > 1
+                {
+                    // Do a simple check to see if we can reason about the storage.
+                    // If all the reused values of `v` are dead in the same block, and the `StorageDead` covers all of them
+                    // (meaning that the storage statement of the original local is the last one),
+                    // we can leave the storage statement as is, which allows the backend to better optimize the code.
+                    let local_storage_cover_all_reused_vals = self.rev_locals[v]
+                        .iter()
+                        .all(|&other| {
+                            let other_dead_loc = self.storage_dead_locations[other];
+                            debug!("checking if local {l:?} with value {v:?} at {loc:?} covers storage for local {other:?} (dead at {other_dead_loc:?})");
+                            let is_dead_covered = if let Some(other_dead_loc) = other_dead_loc {
+                                local_dead_loc.block == other_dead_loc.block && local_dead_loc.statement_index >= other_dead_loc.statement_index
+                            } else {
+                                false
+                            };
+
+                            let other_live_loc = self.storage_live_locations[other];
+                            debug!("checking if local {l:?} with value {v:?} at {loc:?} covers storage for local {other:?} (live at {other_live_loc:?})");
+                            let is_live_covered = if let Some(other_live_loc) = other_live_loc {
+                                local_live_loc.block == other_live_loc.block && local_live_loc.statement_index <= other_live_loc.statement_index
+                            } else {
+                                false
+                            };
+
+                            is_dead_covered && is_live_covered
+                        });
+
+                    // If self.rev_locals[v] == v, then the var is used elsewhere.
+                    if !local_storage_cover_all_reused_vals {
+                        debug!(
+                            "removing storage statements for local {l:?} with value {v:?} at {loc:?}"
+                        );
+                        stmt.make_nop();
+                    } else {
+                        // Otherwise, leave the storage statement as is.
+                        debug!(
+                            "leaving statements for local {l:?} with value {v:?} at {loc:?} as is ({:?} / {:?})",
+                            &self.rev_locals.get(v),
+                            &self.storage_dead_locations
+                        );
+                    }
+                } else {
+                    stmt.make_nop();
+                }
             }
             _ => self.super_statement(stmt, loc),
         }
