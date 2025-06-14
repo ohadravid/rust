@@ -1893,33 +1893,6 @@ struct StorageChecker<'a, 'tcx> {
 }
 
 impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
-    // fn visit_operand(&mut self, operand: &Operand<'tcx>, location: Location) {
-    //     if let Operand::Move(place) = *operand
-    //         && !place.is_indirect_first_projection()
-    //         && self.reused_locals.contains(place.local)
-    //     {
-    //         debug!(?location, ?place.local, "operand is a reused local, checking if it is dead");
-    //         // self.storage_to_remove.insert(place.local);
-
-    //         if let Some(value) = self.locals[place.local] {
-
-    //             if let Some(&local_with_value) =
-    //                 self.rev_locals[value].iter().find(|&&other| self.reused_locals.contains(other))
-    //             {
-    //                 // The local that will store this value must be alive at this location.
-    //                 self.maybe_storage_dead.seek_after_primary_effect(location);
-
-    //                 if self.maybe_storage_dead.get().contains(local_with_value) {
-    //                     debug!(?location, ?place.local, ?value, ?local_with_value, "local is an operand with a value that is maybe dead in this location");
-
-    //                     // TODO: This is too agressive, it removes a ton of storage but doens't fix the gvn test.
-    //                     self.storage_to_remove.insert(local_with_value);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
     fn visit_local(&mut self, local: Local, context: PlaceContext, location: Location) {
         // When this local is used, if it is assigned a value that is reused,
         // we need to check that the local that will be used is not dead in this location.
@@ -1935,17 +1908,18 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
                     "local is used with a value that is reused, but it is the only local for this value"
                 );
                 self.storage_to_remove.insert(local);
+                return;
             }
 
-            // TODO: maybe this isn't the right way to get the "real" local? can there be more than one?
+            // Find the reused local that has this value.
             if let Some(&local_with_value) =
                 self.rev_locals[value].iter().find(|&&other| self.reused_locals.contains(other))
             {
                 // The local that will store this value must be alive at this location.
                 self.maybe_storage_dead.seek_after_primary_effect(location);
 
-                if self.maybe_storage_dead.get().contains(local_with_value)
-                {
+                // If not, we remove the storage statement for this local, making it alive for the duration of the function.
+                if self.maybe_storage_dead.get().contains(local_with_value) {
                     debug!(
                         ?location,
                         ?local,

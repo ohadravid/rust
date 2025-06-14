@@ -220,7 +220,7 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
                     ?location,
                     ?local,
                     ?head,
-                    "replacing use of local with head at a location in which head maybe dead, marking it for storage removal"
+                    "found use of local with head at a location in which head is maybe dead, marking head for storage removal"
                 );
                 self.storage_to_remove.insert(head);
             }
