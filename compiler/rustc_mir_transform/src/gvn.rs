@@ -1926,7 +1926,12 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
         {
             // Can only happen with the other usage is _0, which requires us to remove the storage anyway.
             if self.rev_locals[value].len() == 1 {
-                debug!(?location, ?local, ?value, "local is used with a value that is reused, but it is the only local for this value");
+                debug!(
+                    ?location,
+                    ?local,
+                    ?value,
+                    "local is used with a value that is reused, but it is the only local for this value"
+                );
                 self.storage_to_remove.insert(local);
                 return;
             }
@@ -1956,7 +1961,12 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
                     );
                 }
             } else {
-                debug!(?location, ?local, ?value, "local has a value that is not reused, no need to check storage");
+                debug!(
+                    ?location,
+                    ?local,
+                    ?value,
+                    "local has a value that is not reused, no need to check storage"
+                );
             }
         }
     }

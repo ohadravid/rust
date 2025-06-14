@@ -1,12 +1,12 @@
+use std::borrow::Cow;
+
 use rustc_index::IndexSlice;
 use rustc_index::bit_set::DenseBitSet;
 use rustc_middle::mir::visit::*;
 use rustc_middle::mir::*;
 use rustc_middle::ty::TyCtxt;
-use rustc_mir_dataflow::impls::{always_storage_live_locals, MaybeStorageDead};
-use rustc_mir_dataflow::Analysis;
-use rustc_mir_dataflow::ResultsCursor;
-use std::borrow::Cow;
+use rustc_mir_dataflow::impls::{MaybeStorageDead, always_storage_live_locals};
+use rustc_mir_dataflow::{Analysis, ResultsCursor};
 use tracing::{debug, instrument};
 
 use crate::ssa::SsaLocals;
@@ -48,7 +48,7 @@ impl<'tcx> crate::MirPass<'tcx> for CopyProp {
 
                 // For the head, we need to work harder to determine if we can keep it's storage (which will allow better optimizations later).
                 // We can can get the `maybe_storage_dead: ResultsCursor<'a, 'tcx, MaybeStorageLive<'a>>,`.
-                // Then, we check the local's usage location: if the head is in `maybe_storage_dead`, 
+                // Then, we check the local's usage location: if the head is in `maybe_storage_dead`,
                 // than we have to remove the storage statements for it.
                 head_storage_to_check.insert(head);
             }
@@ -68,7 +68,7 @@ impl<'tcx> crate::MirPass<'tcx> for CopyProp {
             head_storage_to_check,
             storage_to_remove,
         };
-        
+
         storage_checker.visit_body(body);
 
         Replacer {
@@ -77,7 +77,8 @@ impl<'tcx> crate::MirPass<'tcx> for CopyProp {
             fully_moved,
             borrowed_locals: ssa.borrowed_locals(),
             storage_to_remove: storage_checker.storage_to_remove,
-        }.visit_body_preserves_cfg(body);
+        }
+        .visit_body_preserves_cfg(body);
 
         if any_replacement {
             crate::simplify::remove_unused_definitions(body);
@@ -215,7 +216,12 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
         if context.is_use() && self.head_storage_to_check.contains(head) {
             self.maybe_storage_dead.seek_after_primary_effect(location);
             if self.maybe_storage_dead.get().contains(head) {
-                debug!(?location, ?local, ?head, "replacing use of local with head at a location in which head maybe dead, marking it for storage removal");
+                debug!(
+                    ?location,
+                    ?local,
+                    ?head,
+                    "replacing use of local with head at a location in which head maybe dead, marking it for storage removal"
+                );
                 self.storage_to_remove.insert(head);
             }
         }
