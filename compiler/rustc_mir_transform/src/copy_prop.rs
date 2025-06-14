@@ -3,6 +3,10 @@ use rustc_index::bit_set::DenseBitSet;
 use rustc_middle::mir::visit::*;
 use rustc_middle::mir::*;
 use rustc_middle::ty::TyCtxt;
+use rustc_mir_dataflow::impls::{always_storage_live_locals, MaybeStorageDead};
+use rustc_mir_dataflow::Analysis;
+use rustc_mir_dataflow::ResultsCursor;
+use std::borrow::Cow;
 use tracing::{debug, instrument};
 
 use crate::ssa::SsaLocals;
@@ -35,31 +39,44 @@ impl<'tcx> crate::MirPass<'tcx> for CopyProp {
         debug!(?fully_moved);
 
         let mut storage_to_remove = DenseBitSet::new_empty(fully_moved.domain_size());
+        let mut head_storage_to_check = DenseBitSet::new_empty(fully_moved.domain_size());
+
         for (local, &head) in ssa.copy_classes().iter_enumerated() {
             if local != head {
-                debug!(?local, ?head, "removing local's storage since it will be replaced by head");
-                // Since we'll replace all local instances with head, 
-                // we need to remove it's storage statements as they will point to an unused local.
+                // Since we'll replace all local instances with head, we can remove it's storage statements since they do not point to a used local,
                 storage_to_remove.insert(local);
-            }
-            
-            if !fully_moved.contains(head) {
-                debug!(?local, ?head, "removing head's storage since it is not fully moved");
-                // If the head is not fully moved, we must remove its storage statements since it might be accessed later.
-                storage_to_remove.insert(head);
-            } else {
-                debug!(?head, "keeping head's storage since it is fully moved");
+
+                // For the head, we need to work harder to determine if we can keep it's storage (which will allow better optimizations later).
+                // We can can get the `maybe_storage_dead: ResultsCursor<'a, 'tcx, MaybeStorageLive<'a>>,`.
+                // Then, we check the local's usage location: if the head is in `maybe_storage_dead`, 
+                // than we have to remove the storage statements for it.
+                head_storage_to_check.insert(head);
             }
         }
 
         let any_replacement = ssa.copy_classes().iter_enumerated().any(|(l, &h)| l != h);
 
-        Replacer {
+        let always_live_locals = &always_storage_live_locals(body);
+
+        let maybe_storage_dead = MaybeStorageDead::new(Cow::Borrowed(always_live_locals))
+            .iterate_to_fixpoint(tcx, body, None)
+            .into_results_cursor(body);
+
+        let mut replacer = Replacer {
             tcx,
             copy_classes: ssa.copy_classes(),
             fully_moved,
             borrowed_locals: ssa.borrowed_locals(),
             storage_to_remove,
+            head_storage_to_check,
+            maybe_storage_dead,
+        };
+
+        replacer.visit_body_preserves_cfg(body);
+
+        StorageRemover {
+            tcx,
+            storage_to_remove: replacer.storage_to_remove,
         }
         .visit_body_preserves_cfg(body);
 
@@ -113,6 +130,8 @@ struct Replacer<'a, 'tcx> {
     tcx: TyCtxt<'tcx>,
     fully_moved: DenseBitSet<Local>,
     storage_to_remove: DenseBitSet<Local>,
+    head_storage_to_check: DenseBitSet<Local>,
+    maybe_storage_dead: ResultsCursor<'a, 'tcx, MaybeStorageDead<'a>>,
     borrowed_locals: &'a DenseBitSet<Local>,
     copy_classes: &'a IndexSlice<Local, Local>,
 }
@@ -122,7 +141,7 @@ impl<'tcx> MutVisitor<'tcx> for Replacer<'_, 'tcx> {
         self.tcx
     }
 
-    fn visit_local(&mut self, local: &mut Local, ctxt: PlaceContext, _: Location) {
+    fn visit_local(&mut self, local: &mut Local, ctxt: PlaceContext, location: Location) {
         let new_local = self.copy_classes[*local];
         // We must not unify two locals that are borrowed. But this is fine if one is borrowed and
         // the other is not. We chose to check the original local, and not the target. That way, if
@@ -130,6 +149,15 @@ impl<'tcx> MutVisitor<'tcx> for Replacer<'_, 'tcx> {
         if self.borrowed_locals.contains(*local) {
             return;
         }
+
+        if ctxt.is_use() && self.head_storage_to_check.contains(new_local) {
+            self.maybe_storage_dead.seek_after_primary_effect(location);
+            if self.maybe_storage_dead.get().contains(new_local) {
+                debug!(?location, ?local, ?new_local, "replacing use of local with new_local at a location in which new_local maybe dead, marking it for storage removal");
+                self.storage_to_remove.insert(new_local);
+            }
+        }
+
         match ctxt {
             // Do not modify the local in storage statements.
             PlaceContext::NonUse(NonUseContext::StorageLive | NonUseContext::StorageDead) => {}
@@ -180,6 +208,30 @@ impl<'tcx> MutVisitor<'tcx> for Replacer<'_, 'tcx> {
             && lhs == rhs
         {
             stmt.make_nop();
+        }
+    }
+}
+
+
+struct StorageRemover<'tcx> {
+    tcx: TyCtxt<'tcx>,
+    storage_to_remove: DenseBitSet<Local>,
+}
+
+impl<'tcx> MutVisitor<'tcx> for StorageRemover<'tcx> {
+    fn tcx(&self) -> TyCtxt<'tcx> {
+        self.tcx
+    }
+
+    fn visit_statement(&mut self, stmt: &mut Statement<'tcx>, loc: Location) {
+        match stmt.kind {
+            StatementKind::StorageLive(l) | StatementKind::StorageDead(l)
+                if self.storage_to_remove.contains(l) =>
+            {
+                stmt.make_nop();
+                return;
+            }
+            _ => self.super_statement(stmt, loc),
         }
     }
 }
