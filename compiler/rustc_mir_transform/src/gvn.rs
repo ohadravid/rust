@@ -1899,22 +1899,22 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
             && self.reused_locals.contains(place.local)
         {
             debug!(?location, ?place.local, "operand is a reused local, checking if it is dead");
-            // self.storage_to_remove.insert(place.local);
+            // // self.storage_to_remove.insert(place.local);
 
-            if let Some(value) = self.locals[place.local] {
-                let any_maybe_dead_storage = self.rev_locals[value]
-                    .iter()
-                    .filter(|&&other| self.reused_locals.contains(other))
-                    .any(|&other| {
-                        self.maybe_storage_dead.seek_after_primary_effect(location);
-                        self.maybe_storage_dead.get().contains(other)
-                    });
+            // if let Some(value) = self.locals[place.local] {
+            //     let any_maybe_dead_storage = self.rev_locals[value]
+            //         .iter()
+            //         .filter(|&&other| self.reused_locals.contains(other))
+            //         .any(|&other| {
+            //             self.maybe_storage_dead.seek_after_primary_effect(location);
+            //             self.maybe_storage_dead.get().contains(other)
+            //         });
 
-                if any_maybe_dead_storage {
-                    debug!(?location, ?place.local, ?value, "local is an operand with a value that is maybe dead in this location");
-                    self.storage_to_remove.insert(place.local);
-                }
-            }
+            //     if any_maybe_dead_storage {
+            //         debug!(?location, ?place.local, ?value, "local is an operand with a value that is maybe dead in this location");
+            //         self.storage_to_remove.insert(place.local);
+            //     }
+            // }
         }
     }
 
@@ -1925,7 +1925,7 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
             && let Some(value) = self.locals[local]
         {
             // Can only happen with the other usage is _0, which requires us to remove the storage anyway.
-            if self.rev_locals[value].len() == 1 {
+            if self.rev_locals[value].len() == 1 && self.reused_locals.contains(local) {
                 debug!(
                     ?location,
                     ?local,
@@ -1936,6 +1936,7 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
                 return;
             }
 
+            // TODO: maybe this isn't the right way to get the "real" local? can there be more than one?
             if let Some(&local_with_value) =
                 self.rev_locals[value].iter().find(|&&other| self.reused_locals.contains(other))
             {
