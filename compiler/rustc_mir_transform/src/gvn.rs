@@ -104,9 +104,8 @@ use rustc_middle::mir::visit::*;
 use rustc_middle::mir::*;
 use rustc_middle::ty::layout::{HasTypingEnv, LayoutOf};
 use rustc_middle::ty::{self, Ty, TyCtxt};
-use rustc_mir_dataflow::impls::{always_storage_live_locals, MaybeStorageDead};
-use rustc_mir_dataflow::Analysis;
-use rustc_mir_dataflow::ResultsCursor;
+use rustc_mir_dataflow::impls::{MaybeStorageDead, always_storage_live_locals};
+use rustc_mir_dataflow::{Analysis, ResultsCursor};
 use rustc_span::DUMMY_SP;
 use rustc_span::def_id::DefId;
 use smallvec::SmallVec;
@@ -156,8 +155,10 @@ impl<'tcx> crate::MirPass<'tcx> for GVN {
             storage_to_remove: DenseBitSet::new_empty(body.local_decls.len()),
             maybe_storage_dead,
         };
-        
+
         storage_checker.visit_body(body);
+
+        debug!(?storage_checker.storage_to_remove);
 
         StorageRemover {
             tcx,
@@ -1892,26 +1893,70 @@ struct StorageChecker<'a, 'tcx> {
 }
 
 impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
+    fn visit_operand(&mut self, operand: &Operand<'tcx>, location: Location) {
+        if let Operand::Move(place) = *operand
+            && !place.is_indirect_first_projection()
+            && self.reused_locals.contains(place.local)
+        {
+            debug!(?location, ?place.local, "operand is a reused local, checking if it is dead");
+            self.storage_to_remove.insert(place.local);
+
+            if let Some(value) = self.locals[place.local] {
+                let any_maybe_dead_storage = self.rev_locals[value]
+                    .iter()
+                    .filter(|&&other| self.reused_locals.contains(other))
+                    .any(|&other| {
+                        self.maybe_storage_dead.seek_after_primary_effect(location);
+                        self.maybe_storage_dead.get().contains(other)
+                    });
+
+                if any_maybe_dead_storage {
+                    debug!(?location, ?place.local, ?value, "local is an operand with a value that is maybe dead in this location");
+                    self.storage_to_remove.insert(place.local);
+                }
+            }
+        }
+    }
+
     fn visit_local(&mut self, local: Local, context: PlaceContext, location: Location) {
         // When this local is used, if it is assigned a value that is reused,
         // we need to check that the local that will be used is not dead in this location.
         if context.is_use()
-            && self.reused_locals.contains(local)
             && let Some(value) = self.locals[local]
-            && self.rev_locals[value].len() > 1
         {
-            // The local that will store this value must be alive at this location.
-            let local_storage_cover_all_reused_vals = self.rev_locals[value]
-                .iter()
-                .filter(|&&other| self.reused_locals.contains(other))
-                .all(|&other| {
-                    self.maybe_storage_dead.seek_after_primary_effect(location);
-                    self.maybe_storage_dead.get().contains(other)
-                });
-
-            if !local_storage_cover_all_reused_vals {
-                debug!(?location, ?local, ?value, "local is used with a value that is maybe dead in this location");
+            // Can only happen with the other usage is _0, which requires us to remove the storage anyway.
+            if self.rev_locals[value].len() == 1 {
+                debug!(?location, ?local, ?value, "local is used with a value that is reused, but it is the only local for this value");
                 self.storage_to_remove.insert(local);
+                return;
+            }
+
+            if let Some(&local_with_value) =
+                self.rev_locals[value].iter().find(|&&other| self.reused_locals.contains(other))
+            {
+                // The local that will store this value must be alive at this location.
+                self.maybe_storage_dead.seek_after_primary_effect(location);
+
+                if self.maybe_storage_dead.get().contains(local_with_value) {
+                    debug!(
+                        ?location,
+                        ?local,
+                        ?value,
+                        ?local_with_value,
+                        "local has a value form local_with_value that is maybe dead in this location"
+                    );
+                    self.storage_to_remove.insert(local_with_value);
+                } else {
+                    debug!(
+                        ?location,
+                        ?local,
+                        ?value,
+                        ?local_with_value,
+                        "local has a value form local_with_value that is alive in this location"
+                    );
+                }
+            } else {
+                debug!(?location, ?local, ?value, "local has a value that is not reused, no need to check storage");
             }
         }
     }
