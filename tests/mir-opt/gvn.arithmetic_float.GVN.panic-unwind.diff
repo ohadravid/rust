@@ -35,8 +35,10 @@
       let mut _30: f64;
   
       bb0: {
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
           StorageLive(_4);
           _4 = copy _1;
 -         _3 = Add(move _4, const 0f64);
@@ -46,10 +48,14 @@
       }
   
       bb1: {
-          StorageDead(_3);
-          StorageDead(_2);
-          StorageLive(_5);
-          StorageLive(_6);
+-         StorageDead(_3);
+-         StorageDead(_2);
+-         StorageLive(_5);
+-         StorageLive(_6);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_7);
           _7 = copy _1;
 -         _6 = Sub(move _7, const 0f64);
@@ -59,10 +65,14 @@
       }
   
       bb2: {
-          StorageDead(_6);
-          StorageDead(_5);
-          StorageLive(_8);
-          StorageLive(_9);
+-         StorageDead(_6);
+-         StorageDead(_5);
+-         StorageLive(_8);
+-         StorageLive(_9);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_10);
           _10 = copy _1;
 -         _9 = Mul(move _10, const 0f64);
@@ -72,10 +82,14 @@
       }
   
       bb3: {
-          StorageDead(_9);
-          StorageDead(_8);
-          StorageLive(_11);
-          StorageLive(_12);
+-         StorageDead(_9);
+-         StorageDead(_8);
+-         StorageLive(_11);
+-         StorageLive(_12);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_13);
           _13 = copy _1;
 -         _12 = Div(move _13, const 0f64);
@@ -85,10 +99,14 @@
       }
   
       bb4: {
-          StorageDead(_12);
-          StorageDead(_11);
-          StorageLive(_14);
-          StorageLive(_15);
+-         StorageDead(_12);
+-         StorageDead(_11);
+-         StorageLive(_14);
+-         StorageLive(_15);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_16);
           _16 = copy _1;
 -         _15 = Div(const 0f64, move _16);
@@ -98,10 +116,14 @@
       }
   
       bb5: {
-          StorageDead(_15);
-          StorageDead(_14);
-          StorageLive(_17);
-          StorageLive(_18);
+-         StorageDead(_15);
+-         StorageDead(_14);
+-         StorageLive(_17);
+-         StorageLive(_18);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_19);
           _19 = copy _1;
 -         _18 = Rem(move _19, const 0f64);
@@ -111,10 +133,14 @@
       }
   
       bb6: {
-          StorageDead(_18);
-          StorageDead(_17);
-          StorageLive(_20);
-          StorageLive(_21);
+-         StorageDead(_18);
+-         StorageDead(_17);
+-         StorageLive(_20);
+-         StorageLive(_21);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_22);
           _22 = copy _1;
 -         _21 = Rem(const 0f64, move _22);
@@ -124,10 +150,14 @@
       }
   
       bb7: {
-          StorageDead(_21);
-          StorageDead(_20);
-          StorageLive(_23);
-          StorageLive(_24);
+-         StorageDead(_21);
+-         StorageDead(_20);
+-         StorageLive(_23);
+-         StorageLive(_24);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_25);
           _25 = copy _1;
           StorageLive(_26);
@@ -140,10 +170,14 @@
       }
   
       bb8: {
-          StorageDead(_24);
-          StorageDead(_23);
-          StorageLive(_27);
-          StorageLive(_28);
+-         StorageDead(_24);
+-         StorageDead(_23);
+-         StorageLive(_27);
+-         StorageLive(_28);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_29);
           _29 = copy _1;
           StorageLive(_30);
@@ -156,8 +190,10 @@
       }
   
       bb9: {
-          StorageDead(_28);
-          StorageDead(_27);
+-         StorageDead(_28);
+-         StorageDead(_27);
++         nop;
++         nop;
           _0 = const ();
           return;
       }

@@ -13,7 +13,8 @@
       }
   
       bb0: {
-          StorageLive(_1);
+-         StorageLive(_1);
++         nop;
           StorageLive(_2);
           StorageLive(_3);
           _3 = const {ALLOC0: &u8};
@@ -31,7 +32,8 @@
           StorageDead(_5);
           StorageDead(_3);
           _0 = const ();
-          StorageDead(_1);
+-         StorageDead(_1);
++         nop;
           return;
       }
   }

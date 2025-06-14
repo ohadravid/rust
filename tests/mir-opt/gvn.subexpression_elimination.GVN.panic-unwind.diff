@@ -191,8 +191,9 @@
       }
   
       bb0: {
-          StorageLive(_4);
+-         StorageLive(_4);
 -         StorageLive(_5);
++         nop;
 +         nop;
           StorageLive(_6);
           _6 = copy _1;
@@ -208,10 +209,12 @@
   
       bb1: {
 -         StorageDead(_5);
-+         nop;
-          StorageDead(_4);
-          StorageLive(_8);
+-         StorageDead(_4);
+-         StorageLive(_8);
 -         StorageLive(_9);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_10);
           _10 = copy _1;
@@ -227,10 +230,12 @@
   
       bb2: {
 -         StorageDead(_9);
-+         nop;
-          StorageDead(_8);
-          StorageLive(_12);
+-         StorageDead(_8);
+-         StorageLive(_12);
 -         StorageLive(_13);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_14);
           _14 = copy _1;
@@ -246,10 +251,12 @@
   
       bb3: {
 -         StorageDead(_13);
-+         nop;
-          StorageDead(_12);
-          StorageLive(_16);
+-         StorageDead(_12);
+-         StorageLive(_16);
 -         StorageLive(_17);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_18);
           _18 = copy _1;
@@ -272,10 +279,12 @@
   
       bb5: {
 -         StorageDead(_17);
-+         nop;
-          StorageDead(_16);
-          StorageLive(_21);
+-         StorageDead(_16);
+-         StorageLive(_21);
 -         StorageLive(_22);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_23);
           _23 = copy _1;
@@ -298,10 +307,12 @@
   
       bb7: {
 -         StorageDead(_22);
-+         nop;
-          StorageDead(_21);
-          StorageLive(_26);
+-         StorageDead(_21);
+-         StorageLive(_26);
 -         StorageLive(_27);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_28);
           _28 = copy _1;
@@ -317,10 +328,12 @@
   
       bb8: {
 -         StorageDead(_27);
-+         nop;
-          StorageDead(_26);
-          StorageLive(_30);
+-         StorageDead(_26);
+-         StorageLive(_30);
 -         StorageLive(_31);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_32);
           _32 = copy _1;
@@ -336,10 +349,12 @@
   
       bb9: {
 -         StorageDead(_31);
-+         nop;
-          StorageDead(_30);
-          StorageLive(_34);
+-         StorageDead(_30);
+-         StorageLive(_34);
 -         StorageLive(_35);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_36);
           _36 = copy _1;
@@ -355,10 +370,12 @@
   
       bb10: {
 -         StorageDead(_35);
-+         nop;
-          StorageDead(_34);
-          StorageLive(_38);
+-         StorageDead(_34);
+-         StorageLive(_38);
 -         StorageLive(_39);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_40);
           _40 = copy _1;
@@ -374,10 +391,12 @@
   
       bb11: {
 -         StorageDead(_39);
-+         nop;
-          StorageDead(_38);
-          StorageLive(_42);
+-         StorageDead(_38);
+-         StorageLive(_42);
 -         StorageLive(_43);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_44);
           _44 = copy _1;
@@ -393,10 +412,12 @@
   
       bb12: {
 -         StorageDead(_43);
-+         nop;
-          StorageDead(_42);
-          StorageLive(_46);
+-         StorageDead(_42);
+-         StorageLive(_46);
 -         StorageLive(_47);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_48);
           _48 = copy _1;
@@ -409,10 +430,12 @@
   
       bb13: {
 -         StorageDead(_47);
-+         nop;
-          StorageDead(_46);
-          StorageLive(_49);
+-         StorageDead(_46);
+-         StorageLive(_49);
 -         StorageLive(_50);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_51);
           _51 = copy _1;
@@ -425,10 +448,12 @@
   
       bb14: {
 -         StorageDead(_50);
-+         nop;
-          StorageDead(_49);
-          StorageLive(_52);
+-         StorageDead(_49);
+-         StorageLive(_52);
 -         StorageLive(_53);
++         nop;
++         nop;
++         nop;
 +         nop;
           StorageLive(_54);
           _54 = copy _1;
@@ -441,9 +466,11 @@
   
       bb15: {
 -         StorageDead(_53);
+-         StorageDead(_52);
+-         StorageLive(_55);
 +         nop;
-          StorageDead(_52);
-          StorageLive(_55);
++         nop;
++         nop;
           StorageLive(_56);
           StorageLive(_57);
           StorageLive(_58);
@@ -460,8 +487,10 @@
       bb16: {
           StorageDead(_56);
           StorageDead(_57);
-          StorageDead(_55);
-          StorageLive(_59);
+-         StorageDead(_55);
+-         StorageLive(_59);
++         nop;
++         nop;
           StorageLive(_60);
           StorageLive(_61);
           _61 = copy _1;
@@ -477,8 +506,10 @@
   
       bb17: {
           StorageDead(_60);
-          StorageDead(_59);
-          StorageLive(_63);
+-         StorageDead(_59);
+-         StorageLive(_63);
++         nop;
++         nop;
           StorageLive(_64);
           StorageLive(_65);
           _65 = copy _1;
@@ -494,8 +525,10 @@
   
       bb18: {
           StorageDead(_64);
-          StorageDead(_63);
-          StorageLive(_67);
+-         StorageDead(_63);
+-         StorageLive(_67);
++         nop;
++         nop;
           StorageLive(_68);
           StorageLive(_69);
           _69 = copy _1;
@@ -511,8 +544,10 @@
   
       bb19: {
           StorageDead(_68);
-          StorageDead(_67);
-          StorageLive(_71);
+-         StorageDead(_67);
+-         StorageLive(_71);
++         nop;
++         nop;
           StorageLive(_72);
           StorageLive(_73);
           _73 = copy _1;
@@ -535,8 +570,10 @@
   
       bb21: {
           StorageDead(_72);
-          StorageDead(_71);
-          StorageLive(_76);
+-         StorageDead(_71);
+-         StorageLive(_76);
++         nop;
++         nop;
           StorageLive(_77);
           StorageLive(_78);
           _78 = copy _1;
@@ -559,8 +596,10 @@
   
       bb23: {
           StorageDead(_77);
-          StorageDead(_76);
-          StorageLive(_81);
+-         StorageDead(_76);
+-         StorageLive(_81);
++         nop;
++         nop;
           StorageLive(_82);
           StorageLive(_83);
           _83 = copy _1;
@@ -576,8 +615,10 @@
   
       bb24: {
           StorageDead(_82);
-          StorageDead(_81);
-          StorageLive(_85);
+-         StorageDead(_81);
+-         StorageLive(_85);
++         nop;
++         nop;
           StorageLive(_86);
           StorageLive(_87);
           _87 = copy _1;
@@ -593,8 +634,10 @@
   
       bb25: {
           StorageDead(_86);
-          StorageDead(_85);
-          StorageLive(_89);
+-         StorageDead(_85);
+-         StorageLive(_89);
++         nop;
++         nop;
           StorageLive(_90);
           StorageLive(_91);
           _91 = copy _1;
@@ -610,8 +653,10 @@
   
       bb26: {
           StorageDead(_90);
-          StorageDead(_89);
-          StorageLive(_93);
+-         StorageDead(_89);
+-         StorageLive(_93);
++         nop;
++         nop;
           StorageLive(_94);
           StorageLive(_95);
           _95 = copy _1;
@@ -627,8 +672,10 @@
   
       bb27: {
           StorageDead(_94);
-          StorageDead(_93);
-          StorageLive(_97);
+-         StorageDead(_93);
+-         StorageLive(_97);
++         nop;
++         nop;
           StorageLive(_98);
           StorageLive(_99);
           _99 = copy _1;
@@ -644,8 +691,10 @@
   
       bb28: {
           StorageDead(_98);
-          StorageDead(_97);
-          StorageLive(_101);
+-         StorageDead(_97);
+-         StorageLive(_101);
++         nop;
++         nop;
           StorageLive(_102);
           StorageLive(_103);
           _103 = copy _1;
@@ -658,8 +707,10 @@
   
       bb29: {
           StorageDead(_102);
-          StorageDead(_101);
-          StorageLive(_104);
+-         StorageDead(_101);
+-         StorageLive(_104);
++         nop;
++         nop;
           StorageLive(_105);
           StorageLive(_106);
           _106 = copy _1;
@@ -672,8 +723,10 @@
   
       bb30: {
           StorageDead(_105);
-          StorageDead(_104);
-          StorageLive(_107);
+-         StorageDead(_104);
+-         StorageLive(_107);
++         nop;
++         nop;
           StorageLive(_108);
           StorageLive(_109);
           _109 = copy _1;
@@ -686,8 +739,10 @@
   
       bb31: {
           StorageDead(_108);
-          StorageDead(_107);
-          StorageLive(_110);
+-         StorageDead(_107);
+-         StorageLive(_110);
++         nop;
++         nop;
           StorageLive(_111);
           StorageLive(_112);
           StorageLive(_113);
@@ -704,9 +759,11 @@
       bb32: {
           StorageDead(_111);
           StorageDead(_112);
-          StorageDead(_110);
-          StorageLive(_114);
+-         StorageDead(_110);
+-         StorageLive(_114);
 -         StorageLive(_115);
++         nop;
++         nop;
 +         nop;
           StorageLive(_116);
           StorageLive(_117);
@@ -729,9 +786,11 @@
   
       bb33: {
 -         StorageDead(_115);
+-         StorageDead(_114);
+-         StorageLive(_120);
 +         nop;
-          StorageDead(_114);
-          StorageLive(_120);
++         nop;
++         nop;
           StorageLive(_121);
           StorageLive(_122);
           StorageLive(_123);
@@ -754,186 +813,257 @@
   
       bb34: {
           StorageDead(_121);
-          StorageDead(_120);
-          StorageLive(_126);
+-         StorageDead(_120);
+-         StorageLive(_126);
++         nop;
++         nop;
           _126 = &_3;
-          StorageLive(_127);
-          StorageLive(_128);
-          StorageLive(_129);
+-         StorageLive(_127);
+-         StorageLive(_128);
+-         StorageLive(_129);
++         nop;
++         nop;
++         nop;
           _129 = copy (*_126);
           StorageLive(_130);
           _130 = copy _1;
 -         _128 = Add(move _129, move _130);
 +         _128 = Add(move _129, copy _1);
           StorageDead(_130);
-          StorageDead(_129);
+-         StorageDead(_129);
++         nop;
           _127 = opaque::<u64>(move _128) -> [return: bb35, unwind continue];
       }
   
       bb35: {
-          StorageDead(_128);
-          StorageDead(_127);
-          StorageLive(_131);
-          StorageLive(_132);
-          StorageLive(_133);
+-         StorageDead(_128);
+-         StorageDead(_127);
+-         StorageLive(_131);
+-         StorageLive(_132);
+-         StorageLive(_133);
++         nop;
++         nop;
++         nop;
++         nop;
++         nop;
           _133 = copy (*_126);
           StorageLive(_134);
           _134 = copy _1;
 -         _132 = Add(move _133, move _134);
 +         _132 = Add(move _133, copy _1);
           StorageDead(_134);
-          StorageDead(_133);
+-         StorageDead(_133);
++         nop;
           _131 = opaque::<u64>(move _132) -> [return: bb36, unwind continue];
       }
   
       bb36: {
-          StorageDead(_132);
-          StorageDead(_131);
-          StorageLive(_135);
+-         StorageDead(_132);
+-         StorageDead(_131);
+-         StorageLive(_135);
++         nop;
++         nop;
++         nop;
           _135 = &mut _3;
-          StorageLive(_136);
-          StorageLive(_137);
-          StorageLive(_138);
+-         StorageLive(_136);
+-         StorageLive(_137);
+-         StorageLive(_138);
++         nop;
++         nop;
++         nop;
           _138 = copy (*_135);
           StorageLive(_139);
           _139 = copy _1;
 -         _137 = Add(move _138, move _139);
 +         _137 = Add(move _138, copy _1);
           StorageDead(_139);
-          StorageDead(_138);
+-         StorageDead(_138);
++         nop;
           _136 = opaque::<u64>(move _137) -> [return: bb37, unwind continue];
       }
   
       bb37: {
-          StorageDead(_137);
-          StorageDead(_136);
-          StorageLive(_140);
-          StorageLive(_141);
-          StorageLive(_142);
+-         StorageDead(_137);
+-         StorageDead(_136);
+-         StorageLive(_140);
+-         StorageLive(_141);
+-         StorageLive(_142);
++         nop;
++         nop;
++         nop;
++         nop;
++         nop;
           _142 = copy (*_135);
           StorageLive(_143);
           _143 = copy _1;
 -         _141 = Add(move _142, move _143);
 +         _141 = Add(move _142, copy _1);
           StorageDead(_143);
-          StorageDead(_142);
+-         StorageDead(_142);
++         nop;
           _140 = opaque::<u64>(move _141) -> [return: bb38, unwind continue];
       }
   
       bb38: {
-          StorageDead(_141);
-          StorageDead(_140);
+-         StorageDead(_141);
+-         StorageDead(_140);
++         nop;
++         nop;
           StorageLive(_144);
-          StorageLive(_145);
+-         StorageLive(_145);
++         nop;
           _145 = &raw const _3;
-          StorageLive(_146);
-          StorageLive(_147);
-          StorageLive(_148);
+-         StorageLive(_146);
+-         StorageLive(_147);
+-         StorageLive(_148);
++         nop;
++         nop;
++         nop;
           _148 = copy (*_145);
           StorageLive(_149);
           _149 = copy _1;
 -         _147 = Add(move _148, move _149);
 +         _147 = Add(move _148, copy _1);
           StorageDead(_149);
-          StorageDead(_148);
+-         StorageDead(_148);
++         nop;
           _146 = opaque::<u64>(move _147) -> [return: bb39, unwind continue];
       }
   
       bb39: {
-          StorageDead(_147);
-          StorageDead(_146);
-          StorageLive(_150);
-          StorageLive(_151);
-          StorageLive(_152);
+-         StorageDead(_147);
+-         StorageDead(_146);
+-         StorageLive(_150);
+-         StorageLive(_151);
+-         StorageLive(_152);
++         nop;
++         nop;
++         nop;
++         nop;
++         nop;
           _152 = copy (*_145);
           StorageLive(_153);
           _153 = copy _1;
 -         _151 = Add(move _152, move _153);
 +         _151 = Add(move _152, copy _1);
           StorageDead(_153);
-          StorageDead(_152);
+-         StorageDead(_152);
++         nop;
           _150 = opaque::<u64>(move _151) -> [return: bb40, unwind continue];
       }
   
       bb40: {
-          StorageDead(_151);
-          StorageDead(_150);
-          StorageLive(_154);
+-         StorageDead(_151);
+-         StorageDead(_150);
+-         StorageLive(_154);
++         nop;
++         nop;
++         nop;
           _154 = &raw mut _3;
-          StorageLive(_155);
-          StorageLive(_156);
-          StorageLive(_157);
+-         StorageLive(_155);
+-         StorageLive(_156);
+-         StorageLive(_157);
++         nop;
++         nop;
++         nop;
           _157 = copy (*_154);
           StorageLive(_158);
           _158 = copy _1;
 -         _156 = Add(move _157, move _158);
 +         _156 = Add(move _157, copy _1);
           StorageDead(_158);
-          StorageDead(_157);
+-         StorageDead(_157);
++         nop;
           _155 = opaque::<u64>(move _156) -> [return: bb41, unwind continue];
       }
   
       bb41: {
-          StorageDead(_156);
-          StorageDead(_155);
-          StorageLive(_159);
-          StorageLive(_160);
-          StorageLive(_161);
+-         StorageDead(_156);
+-         StorageDead(_155);
+-         StorageLive(_159);
+-         StorageLive(_160);
+-         StorageLive(_161);
++         nop;
++         nop;
++         nop;
++         nop;
++         nop;
           _161 = copy (*_154);
           StorageLive(_162);
           _162 = copy _1;
 -         _160 = Add(move _161, move _162);
 +         _160 = Add(move _161, copy _1);
           StorageDead(_162);
-          StorageDead(_161);
+-         StorageDead(_161);
++         nop;
           _159 = opaque::<u64>(move _160) -> [return: bb42, unwind continue];
       }
   
       bb42: {
-          StorageDead(_160);
-          StorageDead(_159);
+-         StorageDead(_160);
+-         StorageDead(_159);
++         nop;
++         nop;
           _144 = const ();
-          StorageDead(_154);
-          StorageDead(_145);
+-         StorageDead(_154);
+-         StorageDead(_145);
++         nop;
++         nop;
           StorageDead(_144);
-          StorageLive(_163);
+-         StorageLive(_163);
++         nop;
           _163 = &_3;
-          StorageLive(_164);
-          StorageLive(_165);
-          StorageLive(_166);
+-         StorageLive(_164);
+-         StorageLive(_165);
+-         StorageLive(_166);
++         nop;
++         nop;
++         nop;
           _166 = copy (*_163);
           StorageLive(_167);
           _167 = copy _1;
 -         _165 = Add(move _166, move _167);
 +         _165 = Add(move _166, copy _1);
           StorageDead(_167);
-          StorageDead(_166);
+-         StorageDead(_166);
++         nop;
           _164 = opaque::<u64>(move _165) -> [return: bb43, unwind continue];
       }
   
       bb43: {
-          StorageDead(_165);
-          StorageDead(_164);
-          StorageLive(_168);
-          StorageLive(_169);
-          StorageLive(_170);
+-         StorageDead(_165);
+-         StorageDead(_164);
+-         StorageLive(_168);
+-         StorageLive(_169);
+-         StorageLive(_170);
++         nop;
++         nop;
++         nop;
++         nop;
++         nop;
           _170 = copy (*_163);
           StorageLive(_171);
           _171 = copy _1;
 -         _169 = Add(move _170, move _171);
 +         _169 = Add(move _170, copy _1);
           StorageDead(_171);
-          StorageDead(_170);
+-         StorageDead(_170);
++         nop;
           _168 = opaque::<u64>(move _169) -> [return: bb44, unwind continue];
       }
   
       bb44: {
-          StorageDead(_169);
-          StorageDead(_168);
+-         StorageDead(_169);
+-         StorageDead(_168);
++         nop;
++         nop;
           _0 = const ();
-          StorageDead(_163);
-          StorageDead(_135);
-          StorageDead(_126);
+-         StorageDead(_163);
+-         StorageDead(_135);
+-         StorageDead(_126);
++         nop;
++         nop;
++         nop;
           return;
       }
   }

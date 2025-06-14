@@ -22,8 +22,7 @@
       }
   
       bb0: {
--         StorageLive(_1);
-+         nop;
+          StorageLive(_1);
           _1 = foo() -> [return: bb1, unwind continue];
       }
   
@@ -36,16 +35,19 @@
 -         (_2.1: i32) = move _3;
 +         (_2.1: i32) = copy _1;
           StorageDead(_3);
-          StorageLive(_4);
+-         StorageLive(_4);
++         nop;
           _4 = copy (_2.1: i32);
-          StorageLive(_5);
+-         StorageLive(_5);
++         nop;
           _5 = copy (_2.0: i32);
           _0 = const ();
-          StorageDead(_5);
-          StorageDead(_4);
-          StorageDead(_2);
--         StorageDead(_1);
+-         StorageDead(_5);
+-         StorageDead(_4);
 +         nop;
++         nop;
+          StorageDead(_2);
+          StorageDead(_1);
           return;
       }
   }

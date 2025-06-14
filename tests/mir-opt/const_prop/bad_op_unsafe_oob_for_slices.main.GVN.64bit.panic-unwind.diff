@@ -20,17 +20,24 @@
       }
   
       bb0: {
-          StorageLive(_1);
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_1);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
++         nop;
           _9 = const main::promoted[0];
           _3 = &(*_9);
           _2 = &raw const (*_3);
           _1 = move _2 as *const [i32] (PointerCoercion(Unsize, Implicit));
-          StorageDead(_2);
-          StorageDead(_3);
-          StorageLive(_5);
-          StorageLive(_6);
+-         StorageDead(_2);
+-         StorageDead(_3);
+-         StorageLive(_5);
+-         StorageLive(_6);
++         nop;
++         nop;
++         nop;
++         nop;
           _6 = const 3_usize;
 -         _7 = PtrMetadata(copy _1);
 -         _8 = Lt(copy _6, copy _7);
@@ -42,11 +49,14 @@
   
       bb1: {
 -         _5 = copy (*_1)[_6];
+-         StorageDead(_6);
 +         _5 = copy (*_1)[3 of 4];
-          StorageDead(_6);
++         nop;
           _0 = const ();
-          StorageDead(_5);
-          StorageDead(_1);
+-         StorageDead(_5);
+-         StorageDead(_1);
++         nop;
++         nop;
           return;
       }
   }

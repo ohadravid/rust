@@ -104,17 +104,16 @@
       }
   
       bb0: {
--         StorageLive(_1);
-+         nop;
+          StorageLive(_1);
           _1 = const 1_i64;
--         StorageLive(_2);
-+         nop;
+          StorageLive(_2);
           _2 = const 1_u64;
--         StorageLive(_3);
-+         nop;
+          StorageLive(_3);
           _3 = const 1f64;
-          StorageLive(_4);
-          StorageLive(_5);
+-         StorageLive(_4);
+-         StorageLive(_5);
++         nop;
++         nop;
           StorageLive(_6);
 -         _6 = copy _1;
 -         _5 = move _6 as u8 (IntToInt);
@@ -126,10 +125,14 @@
       }
   
       bb1: {
-          StorageDead(_5);
-          StorageDead(_4);
-          StorageLive(_7);
-          StorageLive(_8);
+-         StorageDead(_5);
+-         StorageDead(_4);
+-         StorageLive(_7);
+-         StorageLive(_8);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_9);
 -         _9 = copy _1;
 -         _8 = move _9 as u16 (IntToInt);
@@ -141,10 +144,14 @@
       }
   
       bb2: {
-          StorageDead(_8);
-          StorageDead(_7);
-          StorageLive(_10);
-          StorageLive(_11);
+-         StorageDead(_8);
+-         StorageDead(_7);
+-         StorageLive(_10);
+-         StorageLive(_11);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_12);
 -         _12 = copy _1;
 -         _11 = move _12 as u32 (IntToInt);
@@ -156,10 +163,14 @@
       }
   
       bb3: {
-          StorageDead(_11);
-          StorageDead(_10);
-          StorageLive(_13);
-          StorageLive(_14);
+-         StorageDead(_11);
+-         StorageDead(_10);
+-         StorageLive(_13);
+-         StorageLive(_14);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_15);
 -         _15 = copy _1;
 -         _14 = move _15 as u64 (IntToInt);
@@ -171,10 +182,14 @@
       }
   
       bb4: {
-          StorageDead(_14);
-          StorageDead(_13);
-          StorageLive(_16);
-          StorageLive(_17);
+-         StorageDead(_14);
+-         StorageDead(_13);
+-         StorageLive(_16);
+-         StorageLive(_17);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_18);
 -         _18 = copy _1;
 -         _17 = move _18 as i8 (IntToInt);
@@ -186,10 +201,14 @@
       }
   
       bb5: {
-          StorageDead(_17);
-          StorageDead(_16);
-          StorageLive(_19);
-          StorageLive(_20);
+-         StorageDead(_17);
+-         StorageDead(_16);
+-         StorageLive(_19);
+-         StorageLive(_20);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_21);
 -         _21 = copy _1;
 -         _20 = move _21 as i16 (IntToInt);
@@ -201,10 +220,14 @@
       }
   
       bb6: {
-          StorageDead(_20);
-          StorageDead(_19);
-          StorageLive(_22);
-          StorageLive(_23);
+-         StorageDead(_20);
+-         StorageDead(_19);
+-         StorageLive(_22);
+-         StorageLive(_23);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_24);
 -         _24 = copy _1;
 -         _23 = move _24 as i32 (IntToInt);
@@ -216,9 +239,12 @@
       }
   
       bb7: {
-          StorageDead(_23);
-          StorageDead(_22);
-          StorageLive(_25);
+-         StorageDead(_23);
+-         StorageDead(_22);
+-         StorageLive(_25);
++         nop;
++         nop;
++         nop;
           StorageLive(_26);
 -         _26 = copy _1;
 -         _25 = opaque::<i64>(move _26) -> [return: bb8, unwind continue];
@@ -228,9 +254,12 @@
   
       bb8: {
           StorageDead(_26);
-          StorageDead(_25);
-          StorageLive(_27);
-          StorageLive(_28);
+-         StorageDead(_25);
+-         StorageLive(_27);
+-         StorageLive(_28);
++         nop;
++         nop;
++         nop;
           StorageLive(_29);
 -         _29 = copy _1;
 -         _28 = move _29 as f32 (IntToFloat);
@@ -242,10 +271,14 @@
       }
   
       bb9: {
-          StorageDead(_28);
-          StorageDead(_27);
-          StorageLive(_30);
-          StorageLive(_31);
+-         StorageDead(_28);
+-         StorageDead(_27);
+-         StorageLive(_30);
+-         StorageLive(_31);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_32);
 -         _32 = copy _1;
 -         _31 = move _32 as f64 (IntToFloat);
@@ -257,10 +290,14 @@
       }
   
       bb10: {
-          StorageDead(_31);
-          StorageDead(_30);
-          StorageLive(_33);
-          StorageLive(_34);
+-         StorageDead(_31);
+-         StorageDead(_30);
+-         StorageLive(_33);
+-         StorageLive(_34);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_35);
 -         _35 = copy _2;
 -         _34 = move _35 as u8 (IntToInt);
@@ -272,10 +309,14 @@
       }
   
       bb11: {
-          StorageDead(_34);
-          StorageDead(_33);
-          StorageLive(_36);
-          StorageLive(_37);
+-         StorageDead(_34);
+-         StorageDead(_33);
+-         StorageLive(_36);
+-         StorageLive(_37);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_38);
 -         _38 = copy _2;
 -         _37 = move _38 as u16 (IntToInt);
@@ -287,10 +328,14 @@
       }
   
       bb12: {
-          StorageDead(_37);
-          StorageDead(_36);
-          StorageLive(_39);
-          StorageLive(_40);
+-         StorageDead(_37);
+-         StorageDead(_36);
+-         StorageLive(_39);
+-         StorageLive(_40);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_41);
 -         _41 = copy _2;
 -         _40 = move _41 as u32 (IntToInt);
@@ -302,9 +347,12 @@
       }
   
       bb13: {
-          StorageDead(_40);
-          StorageDead(_39);
-          StorageLive(_42);
+-         StorageDead(_40);
+-         StorageDead(_39);
+-         StorageLive(_42);
++         nop;
++         nop;
++         nop;
           StorageLive(_43);
 -         _43 = copy _2;
 -         _42 = opaque::<u64>(move _43) -> [return: bb14, unwind continue];
@@ -314,9 +362,12 @@
   
       bb14: {
           StorageDead(_43);
-          StorageDead(_42);
-          StorageLive(_44);
-          StorageLive(_45);
+-         StorageDead(_42);
+-         StorageLive(_44);
+-         StorageLive(_45);
++         nop;
++         nop;
++         nop;
           StorageLive(_46);
 -         _46 = copy _2;
 -         _45 = move _46 as i8 (IntToInt);
@@ -328,10 +379,14 @@
       }
   
       bb15: {
-          StorageDead(_45);
-          StorageDead(_44);
-          StorageLive(_47);
-          StorageLive(_48);
+-         StorageDead(_45);
+-         StorageDead(_44);
+-         StorageLive(_47);
+-         StorageLive(_48);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_49);
 -         _49 = copy _2;
 -         _48 = move _49 as i16 (IntToInt);
@@ -343,10 +398,14 @@
       }
   
       bb16: {
-          StorageDead(_48);
-          StorageDead(_47);
-          StorageLive(_50);
-          StorageLive(_51);
+-         StorageDead(_48);
+-         StorageDead(_47);
+-         StorageLive(_50);
+-         StorageLive(_51);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_52);
 -         _52 = copy _2;
 -         _51 = move _52 as i32 (IntToInt);
@@ -358,10 +417,14 @@
       }
   
       bb17: {
-          StorageDead(_51);
-          StorageDead(_50);
-          StorageLive(_53);
-          StorageLive(_54);
+-         StorageDead(_51);
+-         StorageDead(_50);
+-         StorageLive(_53);
+-         StorageLive(_54);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_55);
 -         _55 = copy _2;
 -         _54 = move _55 as i64 (IntToInt);
@@ -373,10 +436,14 @@
       }
   
       bb18: {
-          StorageDead(_54);
-          StorageDead(_53);
-          StorageLive(_56);
-          StorageLive(_57);
+-         StorageDead(_54);
+-         StorageDead(_53);
+-         StorageLive(_56);
+-         StorageLive(_57);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_58);
 -         _58 = copy _2;
 -         _57 = move _58 as f32 (IntToFloat);
@@ -388,10 +455,14 @@
       }
   
       bb19: {
-          StorageDead(_57);
-          StorageDead(_56);
-          StorageLive(_59);
-          StorageLive(_60);
+-         StorageDead(_57);
+-         StorageDead(_56);
+-         StorageLive(_59);
+-         StorageLive(_60);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_61);
 -         _61 = copy _2;
 -         _60 = move _61 as f64 (IntToFloat);
@@ -403,10 +474,14 @@
       }
   
       bb20: {
-          StorageDead(_60);
-          StorageDead(_59);
-          StorageLive(_62);
-          StorageLive(_63);
+-         StorageDead(_60);
+-         StorageDead(_59);
+-         StorageLive(_62);
+-         StorageLive(_63);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_64);
 -         _64 = copy _3;
 -         _63 = move _64 as u8 (FloatToInt);
@@ -418,10 +493,14 @@
       }
   
       bb21: {
-          StorageDead(_63);
-          StorageDead(_62);
-          StorageLive(_65);
-          StorageLive(_66);
+-         StorageDead(_63);
+-         StorageDead(_62);
+-         StorageLive(_65);
+-         StorageLive(_66);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_67);
 -         _67 = copy _3;
 -         _66 = move _67 as u16 (FloatToInt);
@@ -433,10 +512,14 @@
       }
   
       bb22: {
-          StorageDead(_66);
-          StorageDead(_65);
-          StorageLive(_68);
-          StorageLive(_69);
+-         StorageDead(_66);
+-         StorageDead(_65);
+-         StorageLive(_68);
+-         StorageLive(_69);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_70);
 -         _70 = copy _3;
 -         _69 = move _70 as u32 (FloatToInt);
@@ -448,10 +531,14 @@
       }
   
       bb23: {
-          StorageDead(_69);
-          StorageDead(_68);
-          StorageLive(_71);
-          StorageLive(_72);
+-         StorageDead(_69);
+-         StorageDead(_68);
+-         StorageLive(_71);
+-         StorageLive(_72);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_73);
 -         _73 = copy _3;
 -         _72 = move _73 as u64 (FloatToInt);
@@ -463,10 +550,14 @@
       }
   
       bb24: {
-          StorageDead(_72);
-          StorageDead(_71);
-          StorageLive(_74);
-          StorageLive(_75);
+-         StorageDead(_72);
+-         StorageDead(_71);
+-         StorageLive(_74);
+-         StorageLive(_75);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_76);
 -         _76 = copy _3;
 -         _75 = move _76 as i8 (FloatToInt);
@@ -478,10 +569,14 @@
       }
   
       bb25: {
-          StorageDead(_75);
-          StorageDead(_74);
-          StorageLive(_77);
-          StorageLive(_78);
+-         StorageDead(_75);
+-         StorageDead(_74);
+-         StorageLive(_77);
+-         StorageLive(_78);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_79);
 -         _79 = copy _3;
 -         _78 = move _79 as i16 (FloatToInt);
@@ -493,10 +588,14 @@
       }
   
       bb26: {
-          StorageDead(_78);
-          StorageDead(_77);
-          StorageLive(_80);
-          StorageLive(_81);
+-         StorageDead(_78);
+-         StorageDead(_77);
+-         StorageLive(_80);
+-         StorageLive(_81);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_82);
 -         _82 = copy _3;
 -         _81 = move _82 as i32 (FloatToInt);
@@ -508,10 +607,14 @@
       }
   
       bb27: {
-          StorageDead(_81);
-          StorageDead(_80);
-          StorageLive(_83);
-          StorageLive(_84);
+-         StorageDead(_81);
+-         StorageDead(_80);
+-         StorageLive(_83);
+-         StorageLive(_84);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_85);
 -         _85 = copy _3;
 -         _84 = move _85 as i64 (FloatToInt);
@@ -523,10 +626,14 @@
       }
   
       bb28: {
-          StorageDead(_84);
-          StorageDead(_83);
-          StorageLive(_86);
-          StorageLive(_87);
+-         StorageDead(_84);
+-         StorageDead(_83);
+-         StorageLive(_86);
+-         StorageLive(_87);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_88);
 -         _88 = copy _3;
 -         _87 = move _88 as f32 (FloatToFloat);
@@ -538,9 +645,12 @@
       }
   
       bb29: {
-          StorageDead(_87);
-          StorageDead(_86);
-          StorageLive(_89);
+-         StorageDead(_87);
+-         StorageDead(_86);
+-         StorageLive(_89);
++         nop;
++         nop;
++         nop;
           StorageLive(_90);
 -         _90 = copy _3;
 -         _89 = opaque::<f64>(move _90) -> [return: bb30, unwind continue];
@@ -550,14 +660,12 @@
   
       bb30: {
           StorageDead(_90);
-          StorageDead(_89);
+-         StorageDead(_89);
++         nop;
           _0 = const ();
--         StorageDead(_3);
--         StorageDead(_2);
--         StorageDead(_1);
-+         nop;
-+         nop;
-+         nop;
+          StorageDead(_3);
+          StorageDead(_2);
+          StorageDead(_1);
           return;
       }
   }

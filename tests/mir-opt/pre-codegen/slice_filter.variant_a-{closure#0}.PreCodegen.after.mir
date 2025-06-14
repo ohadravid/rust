@@ -68,15 +68,16 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
     }
 
     bb0: {
+        StorageLive(_4);
         _3 = copy (*_2);
         _4 = &((*_3).0: usize);
+        StorageLive(_5);
         _5 = &((*_3).1: usize);
+        StorageLive(_6);
         _6 = &((*_3).2: usize);
+        StorageLive(_7);
         _7 = &((*_3).3: usize);
-        StorageLive(_13);
-        StorageLive(_8);
         _8 = &_4;
-        StorageLive(_10);
         _9 = copy _6;
         _10 = &_9;
         _11 = copy ((*_3).0: usize);
@@ -86,41 +87,29 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
     }
 
     bb1: {
-        StorageDead(_10);
-        StorageDead(_8);
         goto -> bb4;
     }
 
     bb2: {
-        StorageDead(_10);
-        StorageDead(_8);
-        StorageLive(_19);
-        StorageLive(_14);
         _14 = &_7;
-        StorageLive(_16);
         _15 = copy _5;
         _16 = &_15;
         StorageLive(_17);
-        _17 = copy ((*_3).3: usize);
         StorageLive(_18);
+        _17 = copy ((*_3).3: usize);
         _18 = copy ((*_3).1: usize);
         _19 = Le(move _17, move _18);
         StorageDead(_18);
         StorageDead(_17);
-        switchInt(move _19) -> [0: bb3, otherwise: bb8];
+        switchInt(move _19) -> [0: bb3, otherwise: bb7];
     }
 
     bb3: {
-        StorageDead(_16);
-        StorageDead(_14);
         goto -> bb4;
     }
 
     bb4: {
-        StorageLive(_23);
-        StorageLive(_20);
         _20 = &_6;
-        StorageLive(_22);
         _21 = copy _4;
         _22 = &_21;
         _23 = Le(copy _12, copy _11);
@@ -128,47 +117,34 @@ fn variant_a::{closure#0}(_1: &mut {closure@$DIR/slice_filter.rs:7:25: 7:39}, _2
     }
 
     bb5: {
-        StorageDead(_22);
-        StorageDead(_20);
         _0 = const false;
-        goto -> bb7;
+        goto -> bb8;
     }
 
     bb6: {
-        StorageDead(_22);
-        StorageDead(_20);
-        StorageLive(_24);
         _24 = &_5;
-        StorageLive(_26);
         _25 = copy _7;
         _26 = &_25;
         StorageLive(_27);
-        _27 = copy ((*_3).1: usize);
         StorageLive(_28);
+        _27 = copy ((*_3).1: usize);
         _28 = copy ((*_3).3: usize);
         _0 = Le(move _27, move _28);
         StorageDead(_28);
         StorageDead(_27);
-        StorageDead(_26);
-        StorageDead(_24);
-        goto -> bb7;
+        goto -> bb8;
     }
 
     bb7: {
-        StorageDead(_23);
-        goto -> bb9;
+        _0 = const true;
+        goto -> bb8;
     }
 
     bb8: {
-        StorageDead(_16);
-        StorageDead(_14);
-        _0 = const true;
-        goto -> bb9;
-    }
-
-    bb9: {
-        StorageDead(_19);
-        StorageDead(_13);
+        StorageDead(_7);
+        StorageDead(_6);
+        StorageDead(_5);
+        StorageDead(_4);
         return;
     }
 }

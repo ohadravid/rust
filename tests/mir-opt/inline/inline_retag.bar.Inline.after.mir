@@ -39,11 +39,11 @@ fn bar() -> bool {
         Retag(_9);
         _7 = copy _9;
         _6 = copy _7;
+        StorageLive(_11);
+        StorageLive(_12);
         Retag(_3);
         Retag(_6);
-        StorageLive(_11);
         _11 = copy (*_3);
-        StorageLive(_12);
         _12 = copy (*_6);
         _0 = Eq(move _11, move _12);
         StorageDead(_12);

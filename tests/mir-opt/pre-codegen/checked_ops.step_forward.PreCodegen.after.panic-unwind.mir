@@ -33,24 +33,18 @@ fn step_forward(_1: u16, _2: usize) -> u16 {
 
     bb0: {
         StorageLive(_4);
-        StorageLive(_3);
         _3 = Gt(copy _2, const 65535_usize);
         switchInt(move _3) -> [0: bb1, otherwise: bb5];
     }
 
     bb1: {
         _4 = copy _2 as u16 (IntToInt);
-        StorageDead(_3);
-        StorageLive(_6);
-        StorageLive(_5);
         _5 = AddWithOverflow(copy _1, copy _4);
         _6 = copy (_5.1: bool);
         switchInt(copy _6) -> [0: bb2, otherwise: bb3];
     }
 
     bb2: {
-        StorageDead(_5);
-        StorageDead(_6);
         goto -> bb7;
     }
 
@@ -59,13 +53,10 @@ fn step_forward(_1: u16, _2: usize) -> u16 {
     }
 
     bb4: {
-        StorageDead(_5);
-        StorageDead(_6);
         goto -> bb6;
     }
 
     bb5: {
-        StorageDead(_3);
         goto -> bb6;
     }
 

@@ -14,16 +14,22 @@
       }
   
       bb0: {
-          StorageLive(_1);
+-         StorageLive(_1);
++         nop;
           _1 = const 1_i32;
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
           _3 = &_1;
           _2 = wrap_binder!(move _3; unsafe<'a> &'a i32);
-          StorageDead(_3);
+-         StorageDead(_3);
++         nop;
           _0 = const ();
-          StorageDead(_2);
-          StorageDead(_1);
+-         StorageDead(_2);
+-         StorageDead(_1);
++         nop;
++         nop;
           return;
       }
   }

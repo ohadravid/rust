@@ -37,24 +37,18 @@ fn filter_mapped(_1: impl Iterator<Item = T>, _2: impl Fn(T) -> Option<U>) -> ()
     }
 
     bb2: {
-        StorageLive(_8);
         _5 = &mut _4;
-        StorageLive(_6);
         _6 = &mut (_4.0: impl Iterator<Item = T>);
-        StorageLive(_7);
         _7 = &mut (_4.1: impl Fn(T) -> Option<U>);
         _8 = <impl Iterator<Item = T> as Iterator>::find_map::<U, &mut impl Fn(T) -> Option<U>>(move _6, move _7) -> [return: bb3, unwind: bb9];
     }
 
     bb3: {
-        StorageDead(_7);
-        StorageDead(_6);
         _9 = discriminant(_8);
         switchInt(move _9) -> [0: bb4, 1: bb6, otherwise: bb8];
     }
 
     bb4: {
-        StorageDead(_8);
         drop(_4) -> [return: bb5, unwind continue];
     }
 
@@ -71,7 +65,6 @@ fn filter_mapped(_1: impl Iterator<Item = T>, _2: impl Fn(T) -> Option<U>) -> ()
 
     bb7: {
         StorageDead(_10);
-        StorageDead(_8);
         goto -> bb2;
     }
 

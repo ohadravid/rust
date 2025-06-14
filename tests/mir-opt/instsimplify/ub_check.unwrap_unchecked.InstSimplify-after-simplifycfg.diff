@@ -24,6 +24,7 @@
           _2 = copy _1;
           StorageLive(_3);
           StorageLive(_4);
+          StorageLive(_5);
           _3 = discriminant(_2);
           switchInt(move _3) -> [0: bb2, 1: bb3, otherwise: bb1];
       }
@@ -33,7 +34,6 @@
       }
   
       bb2: {
-          StorageLive(_5);
 -         _5 = UbChecks();
 +         _5 = const false;
           assume(copy _5);
@@ -42,6 +42,7 @@
   
       bb3: {
           _0 = move ((_2 as Some).0: i32);
+          StorageDead(_5);
           StorageDead(_4);
           StorageDead(_3);
           StorageDead(_2);

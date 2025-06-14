@@ -13,17 +13,21 @@
   
       bb0: {
 -         StorageLive(_2);
+-         StorageLive(_3);
 +         nop;
-          StorageLive(_3);
++         nop;
           _3 = &(*_1);
           _2 = move _3 as &[i32] (PointerCoercion(Unsize, Implicit));
-          StorageDead(_3);
-          StorageLive(_4);
+-         StorageDead(_3);
+-         StorageLive(_4);
++         nop;
++         nop;
           _4 = &raw const (*_2);
 -         _0 = PtrMetadata(move _4);
-+         _0 = const 42_usize;
-          StorageDead(_4);
+-         StorageDead(_4);
 -         StorageDead(_2);
++         _0 = const 42_usize;
++         nop;
 +         nop;
           return;
       }

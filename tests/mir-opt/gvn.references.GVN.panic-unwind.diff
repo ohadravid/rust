@@ -40,83 +40,115 @@
       }
   
       bb0: {
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
           _3 = &_1;
           _2 = opaque::<&impl Sized>(move _3) -> [return: bb1, unwind: bb14];
       }
   
       bb1: {
-          StorageDead(_3);
-          StorageDead(_2);
-          StorageLive(_4);
-          StorageLive(_5);
+-         StorageDead(_3);
+-         StorageDead(_2);
+-         StorageLive(_4);
+-         StorageLive(_5);
++         nop;
++         nop;
++         nop;
++         nop;
           _5 = &_1;
           _4 = opaque::<&impl Sized>(move _5) -> [return: bb2, unwind: bb14];
       }
   
       bb2: {
-          StorageDead(_5);
-          StorageDead(_4);
-          StorageLive(_6);
-          StorageLive(_7);
+-         StorageDead(_5);
+-         StorageDead(_4);
+-         StorageLive(_6);
+-         StorageLive(_7);
++         nop;
++         nop;
++         nop;
++         nop;
           _7 = &mut _1;
           _6 = opaque::<&mut impl Sized>(move _7) -> [return: bb3, unwind: bb14];
       }
   
       bb3: {
-          StorageDead(_7);
-          StorageDead(_6);
-          StorageLive(_8);
-          StorageLive(_9);
+-         StorageDead(_7);
+-         StorageDead(_6);
+-         StorageLive(_8);
+-         StorageLive(_9);
++         nop;
++         nop;
++         nop;
++         nop;
           _9 = &mut _1;
           _8 = opaque::<&mut impl Sized>(move _9) -> [return: bb4, unwind: bb14];
       }
   
       bb4: {
-          StorageDead(_9);
-          StorageDead(_8);
-          StorageLive(_10);
-          StorageLive(_11);
+-         StorageDead(_9);
+-         StorageDead(_8);
+-         StorageLive(_10);
+-         StorageLive(_11);
++         nop;
++         nop;
++         nop;
++         nop;
           _11 = &raw const _1;
           _10 = opaque::<*const impl Sized>(move _11) -> [return: bb5, unwind: bb14];
       }
   
       bb5: {
-          StorageDead(_11);
-          StorageDead(_10);
-          StorageLive(_12);
-          StorageLive(_13);
+-         StorageDead(_11);
+-         StorageDead(_10);
+-         StorageLive(_12);
+-         StorageLive(_13);
++         nop;
++         nop;
++         nop;
++         nop;
           _13 = &raw const _1;
           _12 = opaque::<*const impl Sized>(move _13) -> [return: bb6, unwind: bb14];
       }
   
       bb6: {
-          StorageDead(_13);
-          StorageDead(_12);
-          StorageLive(_14);
-          StorageLive(_15);
+-         StorageDead(_13);
+-         StorageDead(_12);
+-         StorageLive(_14);
+-         StorageLive(_15);
++         nop;
++         nop;
++         nop;
++         nop;
           _15 = &raw mut _1;
           _14 = opaque::<*mut impl Sized>(move _15) -> [return: bb7, unwind: bb14];
       }
   
       bb7: {
-          StorageDead(_15);
-          StorageDead(_14);
-          StorageLive(_16);
-          StorageLive(_17);
+-         StorageDead(_15);
+-         StorageDead(_14);
+-         StorageLive(_16);
+-         StorageLive(_17);
++         nop;
++         nop;
++         nop;
++         nop;
           _17 = &raw mut _1;
           _16 = opaque::<*mut impl Sized>(move _17) -> [return: bb8, unwind: bb14];
       }
   
       bb8: {
-          StorageDead(_17);
-          StorageDead(_16);
--         StorageLive(_18);
+-         StorageDead(_17);
+-         StorageDead(_16);
 +         nop;
++         nop;
+          StorageLive(_18);
           _18 = &mut _1;
           StorageLive(_19);
-          StorageLive(_20);
+-         StorageLive(_20);
++         nop;
           StorageLive(_21);
 -         _21 = move _18;
 -         _20 = S::<&mut impl Sized>(move _21);
@@ -124,52 +156,68 @@
 +         _20 = S::<&mut impl Sized>(copy _18);
           StorageDead(_21);
 -         _19 = move (_20.0: &mut impl Sized);
-+         _19 = copy _18;
-          StorageDead(_20);
-          StorageLive(_22);
-          StorageLive(_23);
+-         StorageDead(_20);
+-         StorageLive(_22);
+-         StorageLive(_23);
 -         _23 = &(*_19);
++         _19 = copy _18;
++         nop;
++         nop;
++         nop;
 +         _23 = &(*_18);
           _22 = opaque::<&impl Sized>(move _23) -> [return: bb9, unwind: bb14];
       }
   
       bb9: {
-          StorageDead(_23);
-          StorageDead(_22);
-          StorageLive(_24);
-          StorageLive(_25);
+-         StorageDead(_23);
+-         StorageDead(_22);
+-         StorageLive(_24);
+-         StorageLive(_25);
 -         _25 = &mut (*_19);
++         nop;
++         nop;
++         nop;
++         nop;
 +         _25 = &mut (*_18);
           _24 = opaque::<&mut impl Sized>(move _25) -> [return: bb10, unwind: bb14];
       }
   
       bb10: {
-          StorageDead(_25);
-          StorageDead(_24);
-          StorageLive(_26);
-          StorageLive(_27);
+-         StorageDead(_25);
+-         StorageDead(_24);
+-         StorageLive(_26);
+-         StorageLive(_27);
 -         _27 = &raw const (*_19);
++         nop;
++         nop;
++         nop;
++         nop;
 +         _27 = &raw const (*_18);
           _26 = opaque::<*const impl Sized>(move _27) -> [return: bb11, unwind: bb14];
       }
   
       bb11: {
-          StorageDead(_27);
-          StorageDead(_26);
-          StorageLive(_28);
-          StorageLive(_29);
+-         StorageDead(_27);
+-         StorageDead(_26);
+-         StorageLive(_28);
+-         StorageLive(_29);
 -         _29 = &raw mut (*_19);
++         nop;
++         nop;
++         nop;
++         nop;
 +         _29 = &raw mut (*_18);
           _28 = opaque::<*mut impl Sized>(move _29) -> [return: bb12, unwind: bb14];
       }
   
       bb12: {
-          StorageDead(_29);
-          StorageDead(_28);
+-         StorageDead(_29);
+-         StorageDead(_28);
++         nop;
++         nop;
           _0 = const ();
           StorageDead(_19);
--         StorageDead(_18);
-+         nop;
+          StorageDead(_18);
           drop(_1) -> [return: bb13, unwind: bb15];
       }
   

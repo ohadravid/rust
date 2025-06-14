@@ -14,16 +14,21 @@
   
       bb0: {
           StorageLive(_1);
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
           _3 = (const 0_i32, const 1_u8, const 2_i32);
 -         _2 = copy (_3.1: u8);
 -         _1 = Add(move _2, const 0_u8);
+-         StorageDead(_2);
+-         StorageDead(_3);
+-         StorageLive(_4);
 +         _2 = const 1_u8;
 +         _1 = const 1_u8;
-          StorageDead(_2);
-          StorageDead(_3);
-          StorageLive(_4);
++         nop;
++         nop;
++         nop;
           StorageLive(_5);
 -         _5 = copy _1;
 -         _4 = foo(move _5) -> [return: bb1, unwind continue];
@@ -33,7 +38,8 @@
   
       bb1: {
           StorageDead(_5);
-          StorageDead(_4);
+-         StorageDead(_4);
++         nop;
           _0 = const ();
           StorageDead(_1);
           return;

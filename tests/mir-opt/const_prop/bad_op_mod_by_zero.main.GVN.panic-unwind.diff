@@ -20,7 +20,8 @@
       bb0: {
           StorageLive(_1);
           _1 = const 0_i32;
-          StorageLive(_2);
+-         StorageLive(_2);
++         nop;
           StorageLive(_3);
 -         _3 = copy _1;
 -         _4 = Eq(copy _3, const 0_i32);
@@ -46,7 +47,8 @@
 +         _2 = Rem(const 1_i32, const 0_i32);
           StorageDead(_3);
           _0 = const ();
-          StorageDead(_2);
+-         StorageDead(_2);
++         nop;
           StorageDead(_1);
           return;
       }

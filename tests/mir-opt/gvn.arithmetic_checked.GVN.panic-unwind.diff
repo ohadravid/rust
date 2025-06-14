@@ -27,7 +27,8 @@
       let mut _22: (u64, bool);
   
       bb0: {
-          StorageLive(_2);
+-         StorageLive(_2);
++         nop;
           StorageLive(_3);
           StorageLive(_4);
           _4 = copy _1;
@@ -47,8 +48,10 @@
   
       bb2: {
           StorageDead(_3);
-          StorageDead(_2);
-          StorageLive(_6);
+-         StorageDead(_2);
+-         StorageLive(_6);
++         nop;
++         nop;
           StorageLive(_7);
           StorageLive(_8);
           _8 = copy _1;
@@ -68,9 +71,11 @@
   
       bb4: {
           StorageDead(_7);
-          StorageDead(_6);
-          StorageLive(_10);
+-         StorageDead(_6);
+-         StorageLive(_10);
 -         StorageLive(_11);
++         nop;
++         nop;
 +         nop;
           StorageLive(_12);
           _12 = copy _1;
@@ -93,9 +98,11 @@
   
       bb6: {
 -         StorageDead(_11);
+-         StorageDead(_10);
+-         StorageLive(_15);
 +         nop;
-          StorageDead(_10);
-          StorageLive(_15);
++         nop;
++         nop;
           StorageLive(_16);
           StorageLive(_17);
           _17 = copy _1;
@@ -115,8 +122,10 @@
   
       bb8: {
           StorageDead(_16);
-          StorageDead(_15);
-          StorageLive(_19);
+-         StorageDead(_15);
+-         StorageLive(_19);
++         nop;
++         nop;
           StorageLive(_20);
           StorageLive(_21);
           _21 = copy _1;
@@ -136,7 +145,8 @@
   
       bb10: {
           StorageDead(_20);
-          StorageDead(_19);
+-         StorageDead(_19);
++         nop;
           _0 = const ();
           return;
       }

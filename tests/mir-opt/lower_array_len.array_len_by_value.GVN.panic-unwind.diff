@@ -8,18 +8,22 @@
       let mut _3: &[u8; N];
   
       bb0: {
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
           _3 = &_1;
           _2 = move _3 as &[u8] (PointerCoercion(Unsize, Implicit));
-          StorageDead(_3);
+-         StorageDead(_3);
 -         _0 = PtrMetadata(move _2);
++         nop;
 +         _0 = const N;
           goto -> bb1;
       }
   
       bb1: {
-          StorageDead(_2);
+-         StorageDead(_2);
++         nop;
           return;
       }
   }

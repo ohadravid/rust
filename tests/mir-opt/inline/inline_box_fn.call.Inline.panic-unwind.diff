@@ -20,9 +20,9 @@
           StorageLive(_4);
           _4 = (const 1_i32,);
 -         _2 = <Box<dyn Fn(i32)> as Fn<(i32,)>>::call(move _3, move _4) -> [return: bb1, unwind: bb3];
++         StorageLive(_5);
 +         StorageLive(_6);
 +         StorageLive(_7);
-+         StorageLive(_5);
 +         _6 = copy (*_3);
 +         _7 = copy ((_6.0: std::ptr::Unique<dyn std::ops::Fn(i32)>).0: std::ptr::NonNull<dyn std::ops::Fn(i32)>) as *const dyn std::ops::Fn(i32) (Transmute);
 +         _5 = &(*_7);
@@ -52,9 +52,9 @@
 -     bb4 (cleanup): {
 -         resume;
 +     bb4: {
-+         StorageDead(_5);
 +         StorageDead(_7);
 +         StorageDead(_6);
++         StorageDead(_5);
 +         StorageDead(_4);
 +         StorageDead(_3);
 +         StorageDead(_2);

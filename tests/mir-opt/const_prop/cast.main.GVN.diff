@@ -13,15 +13,19 @@
       }
   
       bb0: {
-          StorageLive(_1);
+-         StorageLive(_1);
 -         _1 = const 42_u8 as u32 (IntToInt);
-+         _1 = const 42_u32;
-          StorageLive(_2);
+-         StorageLive(_2);
 -         _2 = const 42_u32 as u8 (IntToInt);
++         nop;
++         _1 = const 42_u32;
++         nop;
 +         _2 = const 42_u8;
           _0 = const ();
-          StorageDead(_2);
-          StorageDead(_1);
+-         StorageDead(_2);
+-         StorageDead(_1);
++         nop;
++         nop;
           return;
       }
   }

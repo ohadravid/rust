@@ -23,10 +23,12 @@
       }
   
       bb0: {
+          StorageLive(_3);
           StorageLive(_4);
           _4 = [copy _1, copy _1, copy _1];
           _3 = &_4;
           _2 = copy _3 as &[T] (PointerCoercion(Unsize, Implicit));
+          StorageDead(_3);
           nop;
           nop;
           goto -> bb2;
@@ -37,15 +39,9 @@
       }
   
       bb2: {
-          StorageLive(_7);
           _7 = &(*_2)[0 of 3];
-          StorageLive(_8);
           _8 = &(*_2)[1 of 3];
-          StorageLive(_9);
           _9 = &(*_2)[2 of 3];
-          StorageDead(_9);
-          StorageDead(_8);
-          StorageDead(_7);
           StorageDead(_4);
           return;
       }

@@ -22,23 +22,29 @@
       bb0: {
           StorageLive(_2);
 -         _2 = (const 1_i32, const false);
+-         StorageLive(_3);
 +         _2 = const (1_i32, false);
-          StorageLive(_3);
++         nop;
           _3 = &raw mut (_2.1: bool);
 -         _2 = (const 1_i32, const false);
+-         StorageLive(_4);
 +         _2 = const (1_i32, false);
-          StorageLive(_4);
++         nop;
           (*_3) = const true;
           _4 = const ();
-          StorageDead(_4);
+-         StorageDead(_4);
++         nop;
           StorageLive(_5);
-          StorageLive(_6);
+-         StorageLive(_6);
++         nop;
           _6 = copy (_2.1: bool);
           _5 = Not(move _6);
-          StorageDead(_6);
+-         StorageDead(_6);
++         nop;
           _0 = copy _5;
           StorageDead(_5);
-          StorageDead(_3);
+-         StorageDead(_3);
++         nop;
           StorageDead(_2);
           return;
       }

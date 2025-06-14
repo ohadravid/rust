@@ -35,9 +35,10 @@
 -         _1 = call_twice::<!, fn() -> ! {sleep}>(sleep) -> unwind continue;
 +         StorageLive(_2);
 +         _2 = sleep;
-+         StorageLive(_6);
-+         StorageLive(_4);
 +         StorageLive(_3);
++         StorageLive(_5);
++         StorageLive(_7);
++         StorageLive(_4);
 +         _3 = &_2;
 +         StorageLive(_8);
 +         _8 = const ();

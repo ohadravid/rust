@@ -46,133 +46,191 @@
       }
   
       bb0: {
-          StorageLive(_4);
-          StorageLive(_5);
+-         StorageLive(_4);
+-         StorageLive(_5);
++         nop;
++         nop;
           _5 = copy (*_1);
           _4 = opaque::<u32>(move _5) -> [return: bb1, unwind continue];
       }
   
       bb1: {
-          StorageDead(_5);
-          StorageDead(_4);
-          StorageLive(_6);
-          StorageLive(_7);
+-         StorageDead(_5);
+-         StorageDead(_4);
+-         StorageLive(_6);
+-         StorageLive(_7);
++         nop;
++         nop;
++         nop;
++         nop;
           _7 = copy (*_1);
           _6 = opaque::<u32>(move _7) -> [return: bb2, unwind continue];
       }
   
       bb2: {
-          StorageDead(_7);
-          StorageDead(_6);
-          StorageLive(_8);
+-         StorageDead(_7);
+-         StorageDead(_6);
+-         StorageLive(_8);
++         nop;
++         nop;
++         nop;
           _8 = &raw const (*_1);
-          StorageLive(_9);
-          StorageLive(_10);
+-         StorageLive(_9);
+-         StorageLive(_10);
++         nop;
++         nop;
           _10 = copy (*_8);
           _9 = opaque::<u32>(move _10) -> [return: bb3, unwind continue];
       }
   
       bb3: {
-          StorageDead(_10);
-          StorageDead(_9);
-          StorageLive(_11);
-          StorageLive(_12);
+-         StorageDead(_10);
+-         StorageDead(_9);
+-         StorageLive(_11);
+-         StorageLive(_12);
++         nop;
++         nop;
++         nop;
++         nop;
           _12 = copy (*_8);
           _11 = opaque::<u32>(move _12) -> [return: bb4, unwind continue];
       }
   
       bb4: {
-          StorageDead(_12);
-          StorageDead(_11);
-          StorageLive(_13);
+-         StorageDead(_12);
+-         StorageDead(_11);
+-         StorageLive(_13);
++         nop;
++         nop;
++         nop;
           _13 = &raw mut (*_1);
-          StorageLive(_14);
-          StorageLive(_15);
+-         StorageLive(_14);
+-         StorageLive(_15);
++         nop;
++         nop;
           _15 = copy (*_13);
           _14 = opaque::<u32>(move _15) -> [return: bb5, unwind continue];
       }
   
       bb5: {
-          StorageDead(_15);
-          StorageDead(_14);
-          StorageLive(_16);
-          StorageLive(_17);
+-         StorageDead(_15);
+-         StorageDead(_14);
+-         StorageLive(_16);
+-         StorageLive(_17);
++         nop;
++         nop;
++         nop;
++         nop;
           _17 = copy (*_13);
           _16 = opaque::<u32>(move _17) -> [return: bb6, unwind continue];
       }
   
       bb6: {
-          StorageDead(_17);
-          StorageDead(_16);
-          StorageLive(_18);
+-         StorageDead(_17);
+-         StorageDead(_16);
+-         StorageLive(_18);
++         nop;
++         nop;
++         nop;
           _18 = &(*_1);
-          StorageLive(_19);
-          StorageLive(_20);
+-         StorageLive(_19);
+-         StorageLive(_20);
++         nop;
++         nop;
           _20 = copy (*_18);
           _19 = opaque::<u32>(move _20) -> [return: bb7, unwind continue];
       }
   
       bb7: {
-          StorageDead(_20);
-          StorageDead(_19);
-          StorageLive(_21);
-          StorageLive(_22);
+-         StorageDead(_20);
+-         StorageDead(_19);
+-         StorageLive(_21);
+-         StorageLive(_22);
++         nop;
++         nop;
++         nop;
++         nop;
           _22 = copy (*_18);
           _21 = opaque::<u32>(move _22) -> [return: bb8, unwind continue];
       }
   
       bb8: {
-          StorageDead(_22);
-          StorageDead(_21);
-          StorageLive(_23);
-          StorageLive(_24);
+-         StorageDead(_22);
+-         StorageDead(_21);
+-         StorageLive(_23);
+-         StorageLive(_24);
++         nop;
++         nop;
++         nop;
++         nop;
           _24 = &(*_18);
           _23 = opaque::<&u32>(move _24) -> [return: bb9, unwind continue];
       }
   
       bb9: {
-          StorageDead(_24);
-          StorageDead(_23);
-          StorageLive(_25);
-          StorageLive(_26);
+-         StorageDead(_24);
+-         StorageDead(_23);
+-         StorageLive(_25);
+-         StorageLive(_26);
++         nop;
++         nop;
++         nop;
++         nop;
           _26 = copy (*_2);
           _25 = opaque::<impl Copy>(move _26) -> [return: bb10, unwind continue];
       }
   
       bb10: {
-          StorageDead(_26);
-          StorageDead(_25);
-          StorageLive(_27);
-          StorageLive(_28);
+-         StorageDead(_26);
+-         StorageDead(_25);
+-         StorageLive(_27);
+-         StorageLive(_28);
++         nop;
++         nop;
++         nop;
++         nop;
           _28 = copy (*_2);
           _27 = opaque::<impl Copy>(move _28) -> [return: bb11, unwind continue];
       }
   
       bb11: {
-          StorageDead(_28);
-          StorageDead(_27);
-          StorageLive(_29);
-          StorageLive(_30);
+-         StorageDead(_28);
+-         StorageDead(_27);
+-         StorageLive(_29);
+-         StorageLive(_30);
++         nop;
++         nop;
++         nop;
++         nop;
           _30 = copy ((*_3).0: u32);
           _29 = opaque::<u32>(move _30) -> [return: bb12, unwind continue];
       }
   
       bb12: {
-          StorageDead(_30);
-          StorageDead(_29);
-          StorageLive(_31);
-          StorageLive(_32);
+-         StorageDead(_30);
+-         StorageDead(_29);
+-         StorageLive(_31);
+-         StorageLive(_32);
++         nop;
++         nop;
++         nop;
++         nop;
           _32 = copy ((*_3).0: u32);
           _31 = opaque::<u32>(move _32) -> [return: bb13, unwind continue];
       }
   
       bb13: {
-          StorageDead(_32);
-          StorageDead(_31);
+-         StorageDead(_32);
+-         StorageDead(_31);
++         nop;
++         nop;
           _0 = const ();
-          StorageDead(_18);
-          StorageDead(_13);
-          StorageDead(_8);
+-         StorageDead(_18);
+-         StorageDead(_13);
+-         StorageDead(_8);
++         nop;
++         nop;
++         nop;
           return;
       }
   }

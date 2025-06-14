@@ -64,7 +64,8 @@
       }
   
       bb2: {
-          StorageLive(_12);
+-         StorageLive(_12);
++         nop;
           _12 = &(((*_1) as B).0: AllCopy);
           StorageLive(_13);
 -         _13 = copy ((*_12).0: i32);
@@ -97,12 +98,14 @@
           StorageDead(_15);
           StorageDead(_14);
           StorageDead(_13);
-          StorageDead(_12);
+-         StorageDead(_12);
++         nop;
           goto -> bb4;
       }
   
       bb3: {
-          StorageLive(_3);
+-         StorageLive(_3);
++         nop;
           _3 = &(((*_1) as A).0: AllCopy);
           StorageLive(_4);
 -         _4 = copy ((*_3).0: i32);
@@ -135,7 +138,8 @@
           StorageDead(_6);
           StorageDead(_5);
           StorageDead(_4);
-          StorageDead(_3);
+-         StorageDead(_3);
++         nop;
           goto -> bb4;
       }
   

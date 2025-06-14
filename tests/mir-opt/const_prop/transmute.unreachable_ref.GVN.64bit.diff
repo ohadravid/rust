@@ -9,8 +9,9 @@
       }
   
       bb0: {
-          StorageLive(_1);
+-         StorageLive(_1);
 -         _1 = const 1_usize as &Never (Transmute);
++         nop;
 +         _1 = const {0x1 as &Never};
           unreachable;
       }

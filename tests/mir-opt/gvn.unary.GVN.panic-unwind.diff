@@ -33,51 +33,59 @@
       }
   
       bb0: {
-          StorageLive(_2);
+-         StorageLive(_2);
++         nop;
           StorageLive(_3);
-          StorageLive(_4);
+-         StorageLive(_4);
++         nop;
           StorageLive(_5);
           _5 = copy _1;
 -         _4 = Neg(move _5);
 +         _4 = Neg(copy _1);
           StorageDead(_5);
 -         _3 = Neg(move _4);
-+         _3 = copy _1;
-          StorageDead(_4);
+-         StorageDead(_4);
 -         _2 = opaque::<i64>(move _3) -> [return: bb1, unwind continue];
++         _3 = copy _1;
++         nop;
 +         _2 = opaque::<i64>(copy _1) -> [return: bb1, unwind continue];
       }
   
       bb1: {
           StorageDead(_3);
-          StorageDead(_2);
--         StorageLive(_6);
+-         StorageDead(_2);
 +         nop;
+          StorageLive(_6);
           StorageLive(_7);
           _7 = copy _1;
 -         _6 = Lt(move _7, const 13_i64);
 +         _6 = Lt(copy _1, const 13_i64);
           StorageDead(_7);
-          StorageLive(_8);
+-         StorageLive(_8);
++         nop;
           StorageLive(_9);
-          StorageLive(_10);
+-         StorageLive(_10);
++         nop;
           StorageLive(_11);
           _11 = copy _6;
 -         _10 = Not(move _11);
 +         _10 = Not(copy _6);
           StorageDead(_11);
 -         _9 = Not(move _10);
-+         _9 = copy _6;
-          StorageDead(_10);
+-         StorageDead(_10);
 -         _8 = opaque::<bool>(move _9) -> [return: bb2, unwind continue];
++         _9 = copy _6;
++         nop;
 +         _8 = opaque::<bool>(copy _6) -> [return: bb2, unwind continue];
       }
   
       bb2: {
           StorageDead(_9);
-          StorageDead(_8);
-          StorageLive(_12);
+-         StorageDead(_8);
+-         StorageLive(_12);
 -         StorageLive(_13);
++         nop;
++         nop;
 +         nop;
           StorageLive(_14);
           _14 = copy _1;
@@ -90,28 +98,34 @@
   
       bb3: {
 -         StorageDead(_13);
+-         StorageDead(_12);
+-         StorageLive(_15);
 +         nop;
-          StorageDead(_12);
-          StorageLive(_15);
++         nop;
++         nop;
           StorageLive(_16);
-          StorageLive(_17);
+-         StorageLive(_17);
++         nop;
           StorageLive(_18);
           _18 = copy _1;
 -         _17 = Eq(move _18, const 15_i64);
 +         _17 = Eq(copy _1, const 15_i64);
           StorageDead(_18);
 -         _16 = Not(move _17);
-+         _16 = copy _13;
-          StorageDead(_17);
+-         StorageDead(_17);
 -         _15 = opaque::<bool>(move _16) -> [return: bb4, unwind continue];
++         _16 = copy _13;
++         nop;
 +         _15 = opaque::<bool>(copy _13) -> [return: bb4, unwind continue];
       }
   
       bb4: {
           StorageDead(_16);
-          StorageDead(_15);
-          StorageLive(_19);
+-         StorageDead(_15);
+-         StorageLive(_19);
 -         StorageLive(_20);
++         nop;
++         nop;
 +         nop;
           StorageLive(_21);
           _21 = copy _1;
@@ -124,29 +138,33 @@
   
       bb5: {
 -         StorageDead(_20);
+-         StorageDead(_19);
+-         StorageLive(_22);
 +         nop;
-          StorageDead(_19);
-          StorageLive(_22);
++         nop;
++         nop;
           StorageLive(_23);
-          StorageLive(_24);
+-         StorageLive(_24);
++         nop;
           StorageLive(_25);
           _25 = copy _1;
 -         _24 = Ne(move _25, const 35_i64);
 +         _24 = Ne(copy _1, const 35_i64);
           StorageDead(_25);
 -         _23 = Not(move _24);
-+         _23 = copy _20;
-          StorageDead(_24);
+-         StorageDead(_24);
 -         _22 = opaque::<bool>(move _23) -> [return: bb6, unwind continue];
++         _23 = copy _20;
++         nop;
 +         _22 = opaque::<bool>(copy _20) -> [return: bb6, unwind continue];
       }
   
       bb6: {
           StorageDead(_23);
-          StorageDead(_22);
-          _0 = const ();
--         StorageDead(_6);
+-         StorageDead(_22);
 +         nop;
+          _0 = const ();
+          StorageDead(_6);
           return;
       }
   }

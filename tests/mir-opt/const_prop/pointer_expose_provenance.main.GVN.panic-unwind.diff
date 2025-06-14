@@ -14,14 +14,19 @@
   
       bb0: {
           StorageLive(_1);
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
           _3 = const main::FOO;
           _2 = &raw const (*_3);
           _1 = move _2 as usize (PointerExposeProvenance);
-          StorageDead(_2);
-          StorageDead(_3);
-          StorageLive(_4);
+-         StorageDead(_2);
+-         StorageDead(_3);
+-         StorageLive(_4);
++         nop;
++         nop;
++         nop;
           StorageLive(_5);
           _5 = copy _1;
 -         _4 = read(move _5) -> [return: bb1, unwind continue];
@@ -30,7 +35,8 @@
   
       bb1: {
           StorageDead(_5);
-          StorageDead(_4);
+-         StorageDead(_4);
++         nop;
           _0 = const ();
           StorageDead(_1);
           return;

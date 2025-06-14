@@ -1899,7 +1899,7 @@ impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
             && self.reused_locals.contains(place.local)
         {
             debug!(?location, ?place.local, "operand is a reused local, checking if it is dead");
-            self.storage_to_remove.insert(place.local);
+            // self.storage_to_remove.insert(place.local);
 
             if let Some(value) = self.locals[place.local] {
                 let any_maybe_dead_storage = self.rev_locals[value]

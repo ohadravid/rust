@@ -20,10 +20,12 @@
       bb1: {
           (_1.1: i32) = const 99_i32;
           (_1.0: i32) = const 42_i32;
-          StorageLive(_2);
+-         StorageLive(_2);
++         nop;
           _2 = copy (_1.1: i32);
           _0 = const ();
-          StorageDead(_2);
+-         StorageDead(_2);
++         nop;
           StorageDead(_1);
           return;
       }

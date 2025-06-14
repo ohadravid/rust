@@ -6,12 +6,12 @@ fn main() -> () {
     let mut _2: &&[(std::option::Option<i32>, &[&u8])];
 
     bb0: {
-        StorageLive(_1);
-        StorageLive(_2);
+        nop;
+        nop;
         _2 = const {ALLOC9: &&[(Option<i32>, &[&u8])]};
         _1 = copy (*_2);
-        StorageDead(_2);
-        StorageDead(_1);
+        nop;
+        nop;
         _0 = const ();
         return;
     }

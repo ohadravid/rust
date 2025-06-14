@@ -91,14 +91,14 @@
       }
   
       bb0: {
--         StorageLive(_3);
-+         nop;
+          StorageLive(_3);
           StorageLive(_4);
           _4 = copy _1;
 -         _3 = MyId(move _4);
 +         _3 = MyId(copy _1);
           StorageDead(_4);
-          StorageLive(_5);
+-         StorageLive(_5);
++         nop;
           StorageLive(_6);
           StorageLive(_7);
 -         _7 = move _3;
@@ -112,19 +112,22 @@
   
       bb1: {
           StorageDead(_6);
-          StorageDead(_5);
--         StorageLive(_8);
+-         StorageDead(_5);
 +         nop;
+          StorageLive(_8);
           StorageLive(_9);
           _9 = copy _1;
-          StorageLive(_10);
+-         StorageLive(_10);
 -         _10 = PhantomData::<String>;
 -         _8 = TypedId::<String>(move _9, move _10);
+-         StorageDead(_10);
++         nop;
 +         _10 = const PhantomData::<String>;
 +         _8 = TypedId::<String>(copy _1, const PhantomData::<String>);
-          StorageDead(_10);
++         nop;
           StorageDead(_9);
-          StorageLive(_11);
+-         StorageLive(_11);
++         nop;
           StorageLive(_12);
           StorageLive(_13);
 -         _13 = move _8;
@@ -138,15 +141,16 @@
   
       bb2: {
           StorageDead(_12);
-          StorageDead(_11);
--         StorageLive(_14);
+-         StorageDead(_11);
 +         nop;
+          StorageLive(_14);
           StorageLive(_15);
           _15 = copy _1;
 -         _14 = Result::<Never, u16>::Err(move _15);
 +         _14 = Result::<Never, u16>::Err(copy _1);
           StorageDead(_15);
-          StorageLive(_16);
+-         StorageLive(_16);
++         nop;
           StorageLive(_17);
           StorageLive(_18);
 -         _18 = move _14;
@@ -160,16 +164,18 @@
   
       bb3: {
           StorageDead(_17);
-          StorageDead(_16);
--         StorageLive(_19);
+-         StorageDead(_16);
 +         nop;
+          StorageLive(_19);
           StorageLive(_20);
           _20 = copy _1;
 -         _19 = Option::<u16>::Some(move _20);
 +         _19 = Option::<u16>::Some(copy _1);
           StorageDead(_20);
-          StorageLive(_21);
-          StorageLive(_22);
+-         StorageLive(_21);
+-         StorageLive(_22);
++         nop;
++         nop;
           StorageLive(_23);
           _23 = copy _19;
 -         _22 = move _23 as u32 (Transmute);
@@ -179,16 +185,20 @@
       }
   
       bb4: {
-          StorageDead(_22);
-          StorageDead(_21);
+-         StorageDead(_22);
+-         StorageDead(_21);
++         nop;
++         nop;
           StorageLive(_24);
           StorageLive(_25);
           _25 = copy _1;
 -         _24 = MyId(move _25);
 +         _24 = copy _3;
           StorageDead(_25);
-          StorageLive(_26);
-          StorageLive(_27);
+-         StorageLive(_26);
+-         StorageLive(_27);
++         nop;
++         nop;
           StorageLive(_28);
 -         _28 = move _24;
 -         _27 = move _28 as i16 (Transmute);
@@ -199,10 +209,11 @@
       }
   
       bb5: {
-          StorageDead(_27);
-          StorageDead(_26);
--         StorageLive(_29);
+-         StorageDead(_27);
+-         StorageDead(_26);
 +         nop;
++         nop;
+          StorageLive(_29);
           StorageLive(_30);
           _30 = copy _1;
           StorageLive(_31);
@@ -211,8 +222,10 @@
 +         _29 = Pair(copy _1, copy _1);
           StorageDead(_31);
           StorageDead(_30);
-          StorageLive(_32);
-          StorageLive(_33);
+-         StorageLive(_32);
+-         StorageLive(_33);
++         nop;
++         nop;
           StorageLive(_34);
 -         _34 = move _29;
 -         _33 = move _34 as u32 (Transmute);
@@ -223,8 +236,10 @@
       }
   
       bb6: {
-          StorageDead(_33);
-          StorageDead(_32);
+-         StorageDead(_33);
+-         StorageDead(_32);
++         nop;
++         nop;
           StorageLive(_35);
           StorageLive(_36);
           _36 = copy _1;
@@ -234,8 +249,10 @@
 +         _35 = copy _29;
           StorageDead(_37);
           StorageDead(_36);
-          StorageLive(_38);
-          StorageLive(_39);
+-         StorageLive(_38);
+-         StorageLive(_39);
++         nop;
++         nop;
           StorageLive(_40);
 -         _40 = move _35;
 -         _39 = move _40 as u16 (Transmute);
@@ -246,16 +263,18 @@
       }
   
       bb7: {
-          StorageDead(_39);
-          StorageDead(_38);
--         StorageLive(_41);
+-         StorageDead(_39);
+-         StorageDead(_38);
 +         nop;
++         nop;
+          StorageLive(_41);
           StorageLive(_42);
           _42 = copy _1;
 -         _41 = (move _42,);
 +         _41 = (copy _1,);
           StorageDead(_42);
-          StorageLive(_43);
+-         StorageLive(_43);
++         nop;
           StorageLive(_44);
           StorageLive(_45);
           _45 = copy _41;
@@ -268,15 +287,16 @@
   
       bb8: {
           StorageDead(_44);
-          StorageDead(_43);
--         StorageLive(_46);
+-         StorageDead(_43);
 +         nop;
+          StorageLive(_46);
           StorageLive(_47);
           _47 = copy _1;
 -         _46 = [move _47];
 +         _46 = [copy _1];
           StorageDead(_47);
-          StorageLive(_48);
+-         StorageLive(_48);
++         nop;
           StorageLive(_49);
           StorageLive(_50);
           _50 = copy _46;
@@ -289,9 +309,9 @@
   
       bb9: {
           StorageDead(_49);
-          StorageDead(_48);
--         StorageLive(_51);
+-         StorageDead(_48);
 +         nop;
+          StorageLive(_51);
           StorageLive(_52);
           _52 = copy _2;
           StorageLive(_53);
@@ -301,7 +321,8 @@
 +         _51 = *const i32 from (copy _2, const ());
           StorageDead(_53);
           StorageDead(_52);
-          StorageLive(_54);
+-         StorageLive(_54);
++         nop;
           StorageLive(_55);
           StorageLive(_56);
           _56 = copy _51;
@@ -314,26 +335,19 @@
   
       bb10: {
           StorageDead(_55);
-          StorageDead(_54);
+-         StorageDead(_54);
++         nop;
           _0 = const ();
--         StorageDead(_51);
--         StorageDead(_46);
--         StorageDead(_41);
-+         nop;
-+         nop;
-+         nop;
+          StorageDead(_51);
+          StorageDead(_46);
+          StorageDead(_41);
           StorageDead(_35);
--         StorageDead(_29);
-+         nop;
+          StorageDead(_29);
           StorageDead(_24);
--         StorageDead(_19);
--         StorageDead(_14);
--         StorageDead(_8);
--         StorageDead(_3);
-+         nop;
-+         nop;
-+         nop;
-+         nop;
+          StorageDead(_19);
+          StorageDead(_14);
+          StorageDead(_8);
+          StorageDead(_3);
           return;
       }
   }

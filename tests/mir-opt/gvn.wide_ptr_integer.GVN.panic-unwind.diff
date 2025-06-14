@@ -39,24 +39,28 @@
       }
   
       bb0: {
--         StorageLive(_1);
-+         nop;
-          StorageLive(_2);
+          StorageLive(_1);
+-         StorageLive(_2);
 -         _2 = (const 1_usize, const 1_usize);
 -         _1 = move _2 as *const [u8] (Transmute);
+-         StorageDead(_2);
++         nop;
 +         _2 = const (1_usize, 1_usize);
 +         _1 = const Indirect { alloc_id: ALLOC0, offset: Size(0 bytes) }: *const [u8];
-          StorageDead(_2);
--         StorageLive(_3);
 +         nop;
-          StorageLive(_4);
+          StorageLive(_3);
+-         StorageLive(_4);
 -         _4 = (const 1_usize, const 2_usize);
 -         _3 = move _4 as *const [u8] (Transmute);
+-         StorageDead(_4);
+-         StorageLive(_5);
+-         StorageLive(_6);
++         nop;
 +         _4 = const (1_usize, 2_usize);
 +         _3 = const Indirect { alloc_id: ALLOC1, offset: Size(0 bytes) }: *const [u8];
-          StorageDead(_4);
-          StorageLive(_5);
-          StorageLive(_6);
++         nop;
++         nop;
++         nop;
           StorageLive(_7);
 -         _7 = copy _1;
 +         _7 = const Indirect { alloc_id: ALLOC0, offset: Size(0 bytes) }: *const [u8];
@@ -72,10 +76,14 @@
       }
   
       bb1: {
-          StorageDead(_6);
-          StorageDead(_5);
-          StorageLive(_9);
-          StorageLive(_10);
+-         StorageDead(_6);
+-         StorageDead(_5);
+-         StorageLive(_9);
+-         StorageLive(_10);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_11);
 -         _11 = copy _1;
 +         _11 = const Indirect { alloc_id: ALLOC0, offset: Size(0 bytes) }: *const [u8];
@@ -91,10 +99,14 @@
       }
   
       bb2: {
-          StorageDead(_10);
-          StorageDead(_9);
-          StorageLive(_13);
-          StorageLive(_14);
+-         StorageDead(_10);
+-         StorageDead(_9);
+-         StorageLive(_13);
+-         StorageLive(_14);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_15);
 -         _15 = copy _1;
 +         _15 = const Indirect { alloc_id: ALLOC0, offset: Size(0 bytes) }: *const [u8];
@@ -110,10 +122,14 @@
       }
   
       bb3: {
-          StorageDead(_14);
-          StorageDead(_13);
-          StorageLive(_17);
-          StorageLive(_18);
+-         StorageDead(_14);
+-         StorageDead(_13);
+-         StorageLive(_17);
+-         StorageLive(_18);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_19);
 -         _19 = copy _1;
 +         _19 = const Indirect { alloc_id: ALLOC0, offset: Size(0 bytes) }: *const [u8];
@@ -129,10 +145,14 @@
       }
   
       bb4: {
-          StorageDead(_18);
-          StorageDead(_17);
-          StorageLive(_21);
-          StorageLive(_22);
+-         StorageDead(_18);
+-         StorageDead(_17);
+-         StorageLive(_21);
+-         StorageLive(_22);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_23);
 -         _23 = copy _1;
 +         _23 = const Indirect { alloc_id: ALLOC0, offset: Size(0 bytes) }: *const [u8];
@@ -148,10 +168,14 @@
       }
   
       bb5: {
-          StorageDead(_22);
-          StorageDead(_21);
-          StorageLive(_25);
-          StorageLive(_26);
+-         StorageDead(_22);
+-         StorageDead(_21);
+-         StorageLive(_25);
+-         StorageLive(_26);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_27);
 -         _27 = copy _1;
 +         _27 = const Indirect { alloc_id: ALLOC0, offset: Size(0 bytes) }: *const [u8];
@@ -167,13 +191,13 @@
       }
   
       bb6: {
-          StorageDead(_26);
-          StorageDead(_25);
+-         StorageDead(_26);
+-         StorageDead(_25);
++         nop;
++         nop;
           _0 = const ();
--         StorageDead(_3);
--         StorageDead(_1);
-+         nop;
-+         nop;
+          StorageDead(_3);
+          StorageDead(_1);
           return;
       }
   }

@@ -53,19 +53,11 @@ fn vec_deref_to_slice(_1: &Vec<u8>) -> &[u8] {
     }
 
     bb0: {
-        StorageLive(_2);
-        StorageLive(_3);
         _2 = copy (((((*_1).0: alloc::raw_vec::RawVec<u8>).0: alloc::raw_vec::RawVecInner).0: std::ptr::Unique<u8>).0: std::ptr::NonNull<u8>);
         _3 = copy _2 as *const u8 (Transmute);
-        StorageLive(_4);
         _4 = copy ((*_1).1: usize);
-        StorageLive(_5);
         _5 = *const [u8] from (copy _3, copy _4);
         _0 = &(*_5);
-        StorageDead(_5);
-        StorageDead(_4);
-        StorageDead(_3);
-        StorageDead(_2);
         return;
     }
 }

@@ -35,8 +35,9 @@
           StorageLive(_1);
           StorageLive(_2);
 -         _2 = S(const 1_usize, const 2_usize);
+-         StorageLive(_3);
 +         _2 = const S(1_usize, 2_usize);
-          StorageLive(_3);
++         nop;
           StorageLive(_4);
 -         _4 = move _2;
 -         _3 = std::mem::drop::<S>(move _4) -> [return: bb1, unwind continue];
@@ -46,15 +47,17 @@
   
       bb1: {
           StorageDead(_4);
-          StorageDead(_3);
+-         StorageDead(_3);
++         nop;
           _1 = const ();
           StorageDead(_2);
           StorageDead(_1);
           StorageLive(_5);
           StorageLive(_6);
 -         _6 = S(const 3_usize, const 4_usize);
+-         StorageLive(_7);
 +         _6 = const S(3_usize, 4_usize);
-          StorageLive(_7);
++         nop;
           StorageLive(_8);
 -         _8 = move _6;
 -         _7 = std::mem::drop::<S>(move _8) -> [return: bb2, unwind continue];
@@ -64,15 +67,17 @@
   
       bb2: {
           StorageDead(_8);
-          StorageDead(_7);
+-         StorageDead(_7);
++         nop;
           _5 = const ();
           StorageDead(_6);
           StorageDead(_5);
           StorageLive(_9);
           StorageLive(_10);
 -         _10 = C(const 1_usize, const 2_usize);
+-         StorageLive(_11);
 +         _10 = const C(1_usize, 2_usize);
-          StorageLive(_11);
++         nop;
           StorageLive(_12);
 -         _12 = copy _10;
 -         _11 = std::mem::drop::<C>(move _12) -> [return: bb3, unwind continue];
@@ -82,14 +87,16 @@
   
       bb3: {
           StorageDead(_12);
-          StorageDead(_11);
+-         StorageDead(_11);
++         nop;
           _9 = const ();
           StorageDead(_10);
           StorageDead(_9);
           StorageLive(_13);
 -         _13 = C(const 3_usize, const 4_usize);
+-         StorageLive(_14);
 +         _13 = const C(3_usize, 4_usize);
-          StorageLive(_14);
++         nop;
           StorageLive(_15);
 -         _15 = copy _13;
 -         _14 = std::mem::drop::<C>(move _15) -> [return: bb4, unwind continue];
@@ -99,7 +106,8 @@
   
       bb4: {
           StorageDead(_15);
-          StorageDead(_14);
+-         StorageDead(_14);
++         nop;
           _0 = const ();
           StorageDead(_13);
           return;

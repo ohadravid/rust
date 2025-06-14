@@ -54,25 +54,17 @@ fn mapped(_1: impl Iterator<Item = T>, _2: impl Fn(T) -> U) -> () {
     bb2: {
         StorageLive(_13);
         _5 = &mut _4;
-        StorageLive(_8);
-        StorageLive(_7);
-        StorageLive(_6);
         _6 = &mut (_4.0: impl Iterator<Item = T>);
         _7 = <impl Iterator<Item = T> as Iterator>::next(move _6) -> [return: bb3, unwind: bb10];
     }
 
     bb3: {
-        StorageDead(_6);
         _8 = &mut (_4.1: impl Fn(T) -> U);
-        StorageLive(_9);
         _9 = discriminant(_7);
         switchInt(move _9) -> [0: bb4, 1: bb6, otherwise: bb9];
     }
 
     bb4: {
-        StorageDead(_9);
-        StorageDead(_7);
-        StorageDead(_8);
         StorageDead(_13);
         drop(_4) -> [return: bb5, unwind continue];
     }
@@ -83,22 +75,13 @@ fn mapped(_1: impl Iterator<Item = T>, _2: impl Fn(T) -> U) -> () {
     }
 
     bb6: {
-        StorageLive(_10);
         _10 = move ((_7 as Some).0: T);
-        StorageLive(_12);
-        StorageLive(_11);
         _11 = (copy _10,);
         _12 = <impl Fn(T) -> U as FnMut<(T,)>>::call_mut(move _8, move _11) -> [return: bb7, unwind: bb10];
     }
 
     bb7: {
-        StorageDead(_11);
         _13 = Option::<U>::Some(move _12);
-        StorageDead(_12);
-        StorageDead(_10);
-        StorageDead(_9);
-        StorageDead(_7);
-        StorageDead(_8);
         StorageLive(_14);
         _14 = move ((_13 as Some).0: U);
         _15 = opaque::<U>(move _14) -> [return: bb8, unwind: bb10];

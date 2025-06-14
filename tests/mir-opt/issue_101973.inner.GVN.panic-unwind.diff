@@ -25,13 +25,15 @@
       }
   
       bb0: {
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
           StorageLive(_4);
           StorageLive(_5);
           _5 = copy _1;
-          nop;
 -         StorageLive(_14);
+          nop;
 -         _14 = BitAnd(copy _5, const 255_u32);
 -         _4 = BitOr(const 0_u32, move _14);
 -         StorageDead(_14);
@@ -40,9 +42,12 @@
 +         _4 = copy _14;
 +         nop;
           StorageDead(_5);
-          StorageLive(_6);
-          StorageLive(_7);
-          StorageLive(_8);
+-         StorageLive(_6);
+-         StorageLive(_7);
+-         StorageLive(_8);
++         nop;
++         nop;
++         nop;
           StorageLive(_9);
           _9 = copy _1;
 -         _10 = const 8_i32 as u32 (IntToInt);
@@ -58,10 +63,11 @@
 +         _8 = Shr(copy _1, const 8_i32);
           StorageDead(_9);
           _7 = BitAnd(move _8, const 15_u32);
-          StorageDead(_8);
+-         StorageDead(_8);
 -         _12 = const 1_i32 as u32 (IntToInt);
 -         _13 = Lt(move _12, const 32_u32);
 -         assert(move _13, "attempt to shift left by `{}`, which would overflow", const 1_i32) -> [success: bb2, unwind continue];
++         nop;
 +         _12 = const 1_u32;
 +         _13 = const true;
 +         assert(const true, "attempt to shift left by `{}`, which would overflow", const 1_i32) -> [success: bb2, unwind continue];
@@ -69,18 +75,22 @@
   
       bb2: {
           _6 = Shl(move _7, const 1_i32);
-          StorageDead(_7);
+-         StorageDead(_7);
 -         _3 = rotate_right::<u32>(move _4, move _6) -> [return: bb3, unwind unreachable];
++         nop;
 +         _3 = rotate_right::<u32>(copy _14, move _6) -> [return: bb3, unwind unreachable];
       }
   
       bb3: {
-          StorageDead(_6);
+-         StorageDead(_6);
++         nop;
           StorageDead(_4);
           _2 = move _3 as i32 (IntToInt);
-          StorageDead(_3);
+-         StorageDead(_3);
++         nop;
           _0 = move _2 as i64 (IntToInt);
-          StorageDead(_2);
+-         StorageDead(_2);
++         nop;
           return;
       }
   }

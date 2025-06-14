@@ -13,11 +13,15 @@
       }
   
       bb0: {
-          StorageLive(_1);
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_1);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
++         nop;
           _3 = [const 42_u32; 8];
-          StorageLive(_4);
+-         StorageLive(_4);
++         nop;
           _4 = const 2_usize;
 -         _5 = Lt(copy _4, const 8_usize);
 -         assert(move _5, "index out of bounds: the length is {} but the index is {}", const 8_usize, copy _4) -> [success: bb1, unwind continue];
@@ -28,13 +32,17 @@
       bb1: {
 -         _2 = copy _3[_4];
 -         _1 = Add(move _2, const 0_u32);
+-         StorageDead(_2);
+-         StorageDead(_4);
+-         StorageDead(_3);
 +         _2 = const 42_u32;
 +         _1 = const 42_u32;
-          StorageDead(_2);
-          StorageDead(_4);
-          StorageDead(_3);
++         nop;
++         nop;
++         nop;
           _0 = const ();
-          StorageDead(_1);
+-         StorageDead(_1);
++         nop;
           return;
       }
   }

@@ -10,15 +10,21 @@
       }
   
       bb0: {
-          StorageLive(_1);
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_1);
+-         StorageLive(_2);
+-         StorageLive(_3);
++         nop;
++         nop;
++         nop;
           _3 = main as fn() (PointerCoercion(ReifyFnPointer, AsCast));
           _2 = move _3 as usize (PointerExposeProvenance);
-          StorageDead(_3);
+-         StorageDead(_3);
++         nop;
           _1 = move _2 as *const fn() (PointerWithExposedProvenance);
-          StorageDead(_2);
-          StorageDead(_1);
+-         StorageDead(_2);
+-         StorageDead(_1);
++         nop;
++         nop;
           _0 = const ();
           return;
       }

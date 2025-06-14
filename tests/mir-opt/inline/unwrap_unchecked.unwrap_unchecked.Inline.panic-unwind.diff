@@ -25,6 +25,7 @@
 -         _0 = Option::<T>::unwrap_unchecked(move _2) -> [return: bb1, unwind: bb2];
 +         StorageLive(_3);
 +         StorageLive(_4);
++         StorageLive(_5);
 +         _3 = discriminant(_2);
 +         switchInt(move _3) -> [0: bb2, 1: bb3, otherwise: bb1];
       }
@@ -38,7 +39,6 @@
 -     bb2 (cleanup): {
 -         resume;
 +     bb2: {
-+         StorageLive(_5);
 +         _5 = UbChecks();
 +         assume(copy _5);
 +         _4 = unreachable_unchecked::precondition_check() -> [return: bb1, unwind unreachable];
@@ -46,6 +46,7 @@
 + 
 +     bb3: {
 +         _0 = move ((_2 as Some).0: T);
++         StorageDead(_5);
 +         StorageDead(_4);
 +         StorageDead(_3);
 +         StorageDead(_2);

@@ -17,10 +17,12 @@
 -         _1 = (const 42_i32, const 43_i32);
 +         _1 = const (42_i32, 43_i32);
           (_1.1: i32) = const 99_i32;
-          StorageLive(_2);
+-         StorageLive(_2);
++         nop;
           _2 = copy _1;
           _0 = const ();
-          StorageDead(_2);
+-         StorageDead(_2);
++         nop;
           StorageDead(_1);
           return;
       }

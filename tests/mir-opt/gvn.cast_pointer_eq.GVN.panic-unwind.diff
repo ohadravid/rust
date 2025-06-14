@@ -85,7 +85,8 @@
 -         _13 = move _14 as *const u32 (PtrToPtr);
 +         _13 = copy _4 as *const u32 (PtrToPtr);
           StorageDead(_14);
-          StorageLive(_15);
+-         StorageLive(_15);
++         nop;
           StorageLive(_16);
           _16 = copy _5;
           StorageLive(_17);
@@ -95,7 +96,8 @@
 +         _15 = Eq(copy _5, copy _8);
           StorageDead(_17);
           StorageDead(_16);
-          StorageLive(_18);
+-         StorageLive(_18);
++         nop;
           StorageLive(_19);
 -         _19 = copy _7;
 +         _19 = copy _8;
@@ -106,7 +108,8 @@
 +         _18 = Eq(copy _2, copy _3);
           StorageDead(_20);
           StorageDead(_19);
-          StorageLive(_21);
+-         StorageLive(_21);
++         nop;
           StorageLive(_22);
 -         _22 = copy _10;
 +         _22 = copy _11;
@@ -117,9 +120,12 @@
           StorageDead(_23);
           StorageDead(_22);
           _0 = const ();
-          StorageDead(_21);
-          StorageDead(_18);
-          StorageDead(_15);
+-         StorageDead(_21);
+-         StorageDead(_18);
+-         StorageDead(_15);
++         nop;
++         nop;
++         nop;
           StorageDead(_13);
           StorageDead(_10);
           StorageDead(_7);

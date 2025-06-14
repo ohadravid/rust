@@ -8,21 +8,27 @@
       let mut _3: (u8, u8);
   
       bb0: {
-          StorageLive(_1);
-          StorageLive(_2);
-          StorageLive(_3);
+-         StorageLive(_1);
+-         StorageLive(_2);
+-         StorageLive(_3);
 -         _3 = (const 1_u8, const 2_u8);
 -         _2 = (move _3,);
+-         StorageDead(_3);
+-         _1 = test(move _2) -> [return: bb1, unwind continue];
++         nop;
++         nop;
++         nop;
 +         _3 = const (1_u8, 2_u8);
 +         _2 = const ((1_u8, 2_u8),);
-          StorageDead(_3);
--         _1 = test(move _2) -> [return: bb1, unwind continue];
++         nop;
 +         _1 = test(const ((1_u8, 2_u8),)) -> [return: bb1, unwind continue];
       }
   
       bb1: {
-          StorageDead(_2);
-          StorageDead(_1);
+-         StorageDead(_2);
+-         StorageDead(_1);
++         nop;
++         nop;
           _0 = const ();
           return;
       }

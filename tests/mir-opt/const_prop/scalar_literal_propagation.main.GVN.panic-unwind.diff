@@ -13,7 +13,8 @@
       bb0: {
           StorageLive(_1);
           _1 = const 1_u32;
-          StorageLive(_2);
+-         StorageLive(_2);
++         nop;
           StorageLive(_3);
 -         _3 = copy _1;
 -         _2 = consume(move _3) -> [return: bb1, unwind continue];
@@ -23,7 +24,8 @@
   
       bb1: {
           StorageDead(_3);
-          StorageDead(_2);
+-         StorageDead(_2);
++         nop;
           _0 = const ();
           StorageDead(_1);
           return;

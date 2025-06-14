@@ -30,27 +30,31 @@
       }
   
       bb0: {
--         StorageLive(_1);
-+         nop;
-          StorageLive(_2);
+          StorageLive(_1);
+-         StorageLive(_2);
 -         _2 = Option::<Layout>::None;
-+         _2 = const Option::<Layout>::None;
-          StorageLive(_10);
+-         StorageLive(_10);
 -         _10 = discriminant(_2);
 -         switchInt(move _10) -> [0: bb3, 1: bb4, otherwise: bb2];
++         nop;
++         _2 = const Option::<Layout>::None;
++         nop;
 +         _10 = const 0_isize;
 +         switchInt(const 0_isize) -> [0: bb3, 1: bb4, otherwise: bb2];
       }
   
       bb1: {
-          StorageDead(_6);
-          _4 = copy _5 as *mut [u8] (Transmute);
-          StorageDead(_5);
-          _3 = move _4 as *mut u8 (PtrToPtr);
-          StorageDead(_4);
-          StorageDead(_3);
--         StorageDead(_1);
+-         StorageDead(_6);
 +         nop;
+          _4 = copy _5 as *mut [u8] (Transmute);
+-         StorageDead(_5);
++         nop;
+          _3 = move _4 as *mut u8 (PtrToPtr);
+-         StorageDead(_4);
+-         StorageDead(_3);
++         nop;
++         nop;
+          StorageDead(_1);
           return;
       }
   
@@ -64,13 +68,19 @@
   
       bb4: {
 -         _1 = move ((_2 as Some).0: std::alloc::Layout);
+-         StorageDead(_10);
+-         StorageDead(_2);
+-         StorageLive(_3);
+-         StorageLive(_4);
+-         StorageLive(_5);
+-         StorageLive(_6);
 +         _1 = const Layout {{ size: Indirect { alloc_id: ALLOC0, offset: Size(8 bytes) }: usize, align: std::ptr::Alignment(Scalar(0x0000000000000000): std::ptr::alignment::AlignmentEnum) }};
-          StorageDead(_10);
-          StorageDead(_2);
-          StorageLive(_3);
-          StorageLive(_4);
-          StorageLive(_5);
-          StorageLive(_6);
++         nop;
++         nop;
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_7);
           _9 = const main::promoted[0];
           _7 = copy _9;

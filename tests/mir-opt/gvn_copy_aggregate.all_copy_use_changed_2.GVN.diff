@@ -29,11 +29,14 @@
           StorageLive(_4);
           _4 = copy ((*_1).2: [i8; 3]);
           ((*_1).0: i32) = const 1_i32;
-          StorageLive(_5);
+-         StorageLive(_5);
++         nop;
           _5 = copy ((*_1).0: i32);
           _2 = move _5;
-          StorageDead(_5);
-          StorageLive(_6);
+-         StorageDead(_5);
+-         StorageLive(_6);
++         nop;
++         nop;
           _6 = copy _2;
           StorageLive(_7);
           _7 = copy _3;
@@ -43,7 +46,8 @@
 +         _0 = AllCopy { a: move _6, b: copy _3, c: copy _4 };
           StorageDead(_8);
           StorageDead(_7);
-          StorageDead(_6);
+-         StorageDead(_6);
++         nop;
           StorageDead(_4);
           StorageDead(_3);
           StorageDead(_2);

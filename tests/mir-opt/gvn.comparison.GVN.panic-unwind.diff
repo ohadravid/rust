@@ -23,8 +23,10 @@
       let mut _18: u64;
   
       bb0: {
-          StorageLive(_3);
-          StorageLive(_4);
+-         StorageLive(_3);
+-         StorageLive(_4);
++         nop;
++         nop;
           StorageLive(_5);
           _5 = copy _1;
           StorageLive(_6);
@@ -38,10 +40,14 @@
       }
   
       bb1: {
-          StorageDead(_4);
-          StorageDead(_3);
-          StorageLive(_7);
-          StorageLive(_8);
+-         StorageDead(_4);
+-         StorageDead(_3);
+-         StorageLive(_7);
+-         StorageLive(_8);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_9);
           _9 = copy _1;
           StorageLive(_10);
@@ -55,10 +61,14 @@
       }
   
       bb2: {
-          StorageDead(_8);
-          StorageDead(_7);
-          StorageLive(_11);
-          StorageLive(_12);
+-         StorageDead(_8);
+-         StorageDead(_7);
+-         StorageLive(_11);
+-         StorageLive(_12);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_13);
           _13 = copy _1;
           StorageLive(_14);
@@ -71,10 +81,14 @@
       }
   
       bb3: {
-          StorageDead(_12);
-          StorageDead(_11);
-          StorageLive(_15);
-          StorageLive(_16);
+-         StorageDead(_12);
+-         StorageDead(_11);
+-         StorageLive(_15);
+-         StorageLive(_16);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_17);
           _17 = copy _1;
           StorageLive(_18);
@@ -87,8 +101,10 @@
       }
   
       bb4: {
-          StorageDead(_16);
-          StorageDead(_15);
+-         StorageDead(_16);
+-         StorageDead(_15);
++         nop;
++         nop;
           _0 = const ();
           return;
       }

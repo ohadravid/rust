@@ -6,7 +6,7 @@
       let mut _1: i32;
   
       bb0: {
-          StorageLive(_1);
+          nop;
           _1 = const 1_i32;
 -         switchInt(const 1_i32) -> [1: bb2, otherwise: bb1];
 +         goto -> bb2;
@@ -21,7 +21,7 @@
       }
   
       bb3: {
-          StorageDead(_1);
+          nop;
           return;
       }
   }

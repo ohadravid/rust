@@ -61,16 +61,21 @@
       }
   
       bb0: {
-          StorageLive(_1);
+-         StorageLive(_1);
++         nop;
           _47 = const wide_ptr_same_provenance::promoted[0];
           _1 = &(*_47);
           StorageLive(_3);
 -         StorageLive(_4);
+-         StorageLive(_5);
+-         StorageLive(_6);
+-         StorageLive(_7);
+-         StorageLive(_8);
 +         nop;
-          StorageLive(_5);
-          StorageLive(_6);
-          StorageLive(_7);
-          StorageLive(_8);
++         nop;
++         nop;
++         nop;
++         nop;
           _8 = const 0_usize;
 -         _9 = Lt(copy _8, const 2_usize);
 -         assert(move _9, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _8) -> [success: bb1, unwind continue];
@@ -83,21 +88,28 @@
 +         _7 = &(*_1)[0 of 1];
           _6 = &(*_7);
           _5 = move _6 as &dyn std::marker::Send (PointerCoercion(Unsize, AsCast));
-          StorageDead(_6);
+-         StorageDead(_6);
++         nop;
           _4 = &raw const (*_5);
 -         _3 = move _4 as *const dyn std::marker::Send (PointerCoercion(Unsize, Implicit));
 -         StorageDead(_4);
+-         StorageDead(_7);
+-         StorageDead(_5);
 +         _3 = copy _4;
 +         nop;
-          StorageDead(_7);
-          StorageDead(_5);
++         nop;
++         nop;
           StorageLive(_10);
 -         StorageLive(_11);
+-         StorageLive(_12);
+-         StorageLive(_13);
+-         StorageLive(_14);
+-         StorageLive(_15);
 +         nop;
-          StorageLive(_12);
-          StorageLive(_13);
-          StorageLive(_14);
-          StorageLive(_15);
++         nop;
++         nop;
++         nop;
++         nop;
           _15 = const 1_usize;
 -         _16 = Lt(copy _15, const 2_usize);
 -         assert(move _16, "index out of bounds: the length is {} but the index is {}", const 2_usize, copy _15) -> [success: bb2, unwind continue];
@@ -110,16 +122,21 @@
 +         _14 = &(*_1)[1 of 2];
           _13 = &(*_14);
           _12 = move _13 as &dyn std::marker::Send (PointerCoercion(Unsize, AsCast));
-          StorageDead(_13);
+-         StorageDead(_13);
++         nop;
           _11 = &raw const (*_12);
 -         _10 = move _11 as *const dyn std::marker::Send (PointerCoercion(Unsize, Implicit));
 -         StorageDead(_11);
+-         StorageDead(_14);
+-         StorageDead(_12);
+-         StorageLive(_17);
+-         StorageLive(_18);
 +         _10 = copy _11;
 +         nop;
-          StorageDead(_14);
-          StorageDead(_12);
-          StorageLive(_17);
-          StorageLive(_18);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_19);
 -         _19 = copy _3;
 +         _19 = copy _4;
@@ -138,10 +155,14 @@
       }
   
       bb3: {
-          StorageDead(_18);
-          StorageDead(_17);
-          StorageLive(_22);
-          StorageLive(_23);
+-         StorageDead(_18);
+-         StorageDead(_17);
+-         StorageLive(_22);
+-         StorageLive(_23);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_24);
 -         _24 = copy _3;
 +         _24 = copy _4;
@@ -160,10 +181,14 @@
       }
   
       bb4: {
-          StorageDead(_23);
-          StorageDead(_22);
-          StorageLive(_27);
-          StorageLive(_28);
+-         StorageDead(_23);
+-         StorageDead(_22);
+-         StorageLive(_27);
+-         StorageLive(_28);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_29);
 -         _29 = copy _3;
 +         _29 = copy _4;
@@ -182,10 +207,14 @@
       }
   
       bb5: {
-          StorageDead(_28);
-          StorageDead(_27);
-          StorageLive(_32);
-          StorageLive(_33);
+-         StorageDead(_28);
+-         StorageDead(_27);
+-         StorageLive(_32);
+-         StorageLive(_33);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_34);
 -         _34 = copy _3;
 +         _34 = copy _4;
@@ -204,10 +233,14 @@
       }
   
       bb6: {
-          StorageDead(_33);
-          StorageDead(_32);
-          StorageLive(_37);
-          StorageLive(_38);
+-         StorageDead(_33);
+-         StorageDead(_32);
+-         StorageLive(_37);
+-         StorageLive(_38);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_39);
 -         _39 = copy _3;
 +         _39 = copy _4;
@@ -226,10 +259,14 @@
       }
   
       bb7: {
-          StorageDead(_38);
-          StorageDead(_37);
-          StorageLive(_42);
-          StorageLive(_43);
+-         StorageDead(_38);
+-         StorageDead(_37);
+-         StorageLive(_42);
+-         StorageLive(_43);
++         nop;
++         nop;
++         nop;
++         nop;
           StorageLive(_44);
 -         _44 = copy _3;
 +         _44 = copy _4;
@@ -248,14 +285,19 @@
       }
   
       bb8: {
-          StorageDead(_43);
-          StorageDead(_42);
+-         StorageDead(_43);
+-         StorageDead(_42);
++         nop;
++         nop;
           _0 = const ();
-          StorageDead(_15);
+-         StorageDead(_15);
++         nop;
           StorageDead(_10);
-          StorageDead(_8);
+-         StorageDead(_8);
++         nop;
           StorageDead(_3);
-          StorageDead(_1);
+-         StorageDead(_1);
++         nop;
           return;
       }
   }

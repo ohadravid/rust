@@ -7,15 +7,19 @@
       let mut _2: ();
   
       bb0: {
-          StorageLive(_1);
-          StorageLive(_2);
+-         StorageLive(_1);
+-         StorageLive(_2);
 -         _2 = ();
 -         _1 = Union32 { value: move _2 };
+-         StorageDead(_2);
++         nop;
++         nop;
 +         _2 = const ();
 +         _1 = Union32 { value: const () };
-          StorageDead(_2);
++         nop;
           _0 = move _1 as u32 (Transmute);
-          StorageDead(_1);
+-         StorageDead(_1);
++         nop;
           return;
       }
   }

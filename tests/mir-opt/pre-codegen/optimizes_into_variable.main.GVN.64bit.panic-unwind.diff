@@ -22,20 +22,24 @@
       }
   
       bb0: {
-          StorageLive(_1);
+-         StorageLive(_1);
 -         _2 = AddWithOverflow(const 2_i32, const 2_i32);
 -         assert(!move (_2.1: bool), "attempt to compute `{} + {}`, which would overflow", const 2_i32, const 2_i32) -> [success: bb1, unwind continue];
++         nop;
 +         _2 = const (4_i32, false);
 +         assert(!const false, "attempt to compute `{} + {}`, which would overflow", const 2_i32, const 2_i32) -> [success: bb1, unwind continue];
       }
   
       bb1: {
 -         _1 = move (_2.0: i32);
+-         StorageLive(_3);
+-         StorageLive(_4);
 +         _1 = const 4_i32;
-          StorageLive(_3);
-          StorageLive(_4);
++         nop;
++         nop;
           _4 = [const 0_i32, const 1_i32, const 2_i32, const 3_i32, const 4_i32, const 5_i32];
-          StorageLive(_5);
+-         StorageLive(_5);
++         nop;
           _5 = const 3_usize;
 -         _6 = Lt(copy _5, const 6_usize);
 -         assert(move _6, "index out of bounds: the length is {} but the index is {}", const 6_usize, copy _5) -> [success: bb2, unwind continue];
@@ -45,9 +49,11 @@
   
       bb2: {
 -         _3 = copy _4[_5];
+-         StorageDead(_5);
+-         StorageDead(_4);
 +         _3 = const 3_i32;
-          StorageDead(_5);
-          StorageDead(_4);
++         nop;
++         nop;
           StorageLive(_7);
           StorageLive(_8);
           _8 = const 42_u32;
@@ -55,8 +61,10 @@
 +         _7 = const 42_u32;
           StorageDead(_8);
           StorageDead(_7);
-          StorageDead(_3);
-          StorageDead(_1);
+-         StorageDead(_3);
+-         StorageDead(_1);
++         nop;
++         nop;
           return;
       }
   }
