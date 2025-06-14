@@ -33,100 +33,92 @@
   
       bb0: {
           StorageLive(_1);
--         StorageLive(_2);
+          StorageLive(_2);
 -         _2 = S(const 1_usize, const 2_usize);
-+         nop;
 +         _2 = const S(1_usize, 2_usize);
           StorageLive(_3);
           StorageLive(_4);
 -         _4 = move _2;
--         _3 = std::mem::drop::<S>(move _4) -> [return: bb1, unwind continue];
+-         _3 = std::mem::drop::<S>(move _4) -> [return: bb1, unwind unreachable];
 +         _4 = const S(1_usize, 2_usize);
-+         _3 = std::mem::drop::<S>(const S(1_usize, 2_usize)) -> [return: bb1, unwind continue];
++         _3 = std::mem::drop::<S>(const S(1_usize, 2_usize)) -> [return: bb1, unwind unreachable];
       }
   
       bb1: {
           StorageDead(_4);
           StorageDead(_3);
           _1 = const ();
--         StorageDead(_2);
-+         nop;
+          StorageDead(_2);
           StorageDead(_1);
           StorageLive(_5);
--         StorageLive(_6);
+          StorageLive(_6);
 -         _6 = S(const 3_usize, const 4_usize);
-+         nop;
 +         _6 = const S(3_usize, 4_usize);
           StorageLive(_7);
           StorageLive(_8);
 -         _8 = move _6;
--         _7 = std::mem::drop::<S>(move _8) -> [return: bb2, unwind continue];
+-         _7 = std::mem::drop::<S>(move _8) -> [return: bb2, unwind unreachable];
 +         _8 = const S(3_usize, 4_usize);
-+         _7 = std::mem::drop::<S>(const S(3_usize, 4_usize)) -> [return: bb2, unwind continue];
++         _7 = std::mem::drop::<S>(const S(3_usize, 4_usize)) -> [return: bb2, unwind unreachable];
       }
   
       bb2: {
           StorageDead(_8);
           StorageDead(_7);
           _5 = const ();
--         StorageDead(_6);
-+         nop;
+          StorageDead(_6);
           StorageDead(_5);
           StorageLive(_9);
--         StorageLive(_10);
+          StorageLive(_10);
 -         _10 = C(const 1_usize, const 2_usize);
-+         nop;
 +         _10 = const C(1_usize, 2_usize);
           StorageLive(_11);
           StorageLive(_12);
 -         _12 = copy _10;
--         _11 = std::mem::drop::<C>(move _12) -> [return: bb3, unwind continue];
+-         _11 = std::mem::drop::<C>(move _12) -> [return: bb3, unwind unreachable];
 +         _12 = const C(1_usize, 2_usize);
-+         _11 = std::mem::drop::<C>(const C(1_usize, 2_usize)) -> [return: bb3, unwind continue];
++         _11 = std::mem::drop::<C>(const C(1_usize, 2_usize)) -> [return: bb3, unwind unreachable];
       }
   
       bb3: {
           StorageDead(_12);
           StorageDead(_11);
           _9 = const ();
--         StorageDead(_10);
-+         nop;
+          StorageDead(_10);
           StorageDead(_9);
--         StorageLive(_13);
+          StorageLive(_13);
 -         _13 = C(const 3_usize, const 4_usize);
-+         nop;
 +         _13 = const C(3_usize, 4_usize);
           StorageLive(_14);
           StorageLive(_15);
 -         _15 = copy _13;
--         _14 = std::mem::drop::<C>(move _15) -> [return: bb4, unwind continue];
+-         _14 = std::mem::drop::<C>(move _15) -> [return: bb4, unwind unreachable];
 +         _15 = const C(3_usize, 4_usize);
-+         _14 = std::mem::drop::<C>(const C(3_usize, 4_usize)) -> [return: bb4, unwind continue];
++         _14 = std::mem::drop::<C>(const C(3_usize, 4_usize)) -> [return: bb4, unwind unreachable];
       }
   
       bb4: {
           StorageDead(_15);
           StorageDead(_14);
           _0 = const ();
--         StorageDead(_13);
-+         nop;
+          StorageDead(_13);
           return;
       }
 + }
 + 
-+ ALLOC0 (size: 16, align: 8) {
-+     03 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 │ ................
++ ALLOC0 (size: 8, align: 4) {
++     03 00 00 00 04 00 00 00                         │ ........
 + }
 + 
-+ ALLOC1 (size: 16, align: 8) {
-+     01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 │ ................
++ ALLOC1 (size: 8, align: 4) {
++     01 00 00 00 02 00 00 00                         │ ........
 + }
 + 
-+ ALLOC2 (size: 16, align: 8) {
-+     03 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 │ ................
++ ALLOC2 (size: 8, align: 4) {
++     03 00 00 00 04 00 00 00                         │ ........
 + }
 + 
-+ ALLOC3 (size: 16, align: 8) {
-+     01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 │ ................
++ ALLOC3 (size: 8, align: 4) {
++     01 00 00 00 02 00 00 00                         │ ........
   }
   

@@ -104,6 +104,8 @@ use rustc_middle::mir::visit::*;
 use rustc_middle::mir::*;
 use rustc_middle::ty::layout::{HasTypingEnv, LayoutOf};
 use rustc_middle::ty::{self, Ty, TyCtxt};
+use rustc_mir_dataflow::impls::{MaybeStorageDead, always_storage_live_locals};
+use rustc_mir_dataflow::{Analysis, ResultsCursor};
 use rustc_span::DUMMY_SP;
 use rustc_span::def_id::DefId;
 use smallvec::SmallVec;
@@ -140,10 +142,30 @@ impl<'tcx> crate::MirPass<'tcx> for GVN {
             state.visit_basic_block_data(bb, data);
         }
 
-        // For each local that is reused (`y` above), we remove its storage statements do avoid any
-        // difficulty. Those locals are SSA, so should be easy to optimize by LLVM without storage
-        // statements.
-        StorageRemover { tcx, reused_locals: state.reused_locals }.visit_body_preserves_cfg(body);
+        let always_live_locals = &always_storage_live_locals(body);
+
+        let maybe_storage_dead = MaybeStorageDead::new(Cow::Borrowed(always_live_locals))
+            .iterate_to_fixpoint(tcx, body, None)
+            .into_results_cursor(body);
+
+        let mut storage_checker = StorageChecker {
+            reused_locals: state.reused_locals.clone(),
+            rev_locals: state.rev_locals,
+            locals: state.locals,
+            storage_to_remove: DenseBitSet::new_empty(body.local_decls.len()),
+            maybe_storage_dead,
+        };
+
+        storage_checker.visit_body(body);
+
+        debug!(?storage_checker.storage_to_remove);
+
+        StorageRemover {
+            tcx,
+            reused_locals: state.reused_locals,
+            storage_to_remove: storage_checker.storage_to_remove,
+        }
+        .visit_body_preserves_cfg(body);
     }
 
     fn is_required(&self) -> bool {
@@ -1824,6 +1846,7 @@ impl<'tcx> MutVisitor<'tcx> for VnState<'_, 'tcx> {
 struct StorageRemover<'tcx> {
     tcx: TyCtxt<'tcx>,
     reused_locals: DenseBitSet<Local>,
+    storage_to_remove: DenseBitSet<Local>,
 }
 
 impl<'tcx> MutVisitor<'tcx> for StorageRemover<'tcx> {
@@ -1844,11 +1867,71 @@ impl<'tcx> MutVisitor<'tcx> for StorageRemover<'tcx> {
         match stmt.kind {
             // When removing storage statements, we need to remove both (#107511).
             StatementKind::StorageLive(l) | StatementKind::StorageDead(l)
-                if self.reused_locals.contains(l) =>
+                if self.storage_to_remove.contains(l) =>
             {
                 stmt.make_nop()
             }
             _ => self.super_statement(stmt, loc),
+        }
+    }
+}
+
+struct StorageChecker<'a, 'tcx> {
+    storage_to_remove: DenseBitSet<Local>,
+    reused_locals: DenseBitSet<Local>,
+    locals: IndexVec<Local, Option<VnIndex>>,
+    rev_locals: IndexVec<VnIndex, SmallVec<[Local; 1]>>,
+    maybe_storage_dead: ResultsCursor<'a, 'tcx, MaybeStorageDead<'a>>,
+}
+
+impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
+    fn visit_local(&mut self, local: Local, context: PlaceContext, location: Location) {
+        // When this local is used, if it is assigned a value that is reused,
+        // we need to check that the local that will be used is not dead in this location.
+        if !context.is_use() {
+            return;
+        }
+        
+        if let Some(value) = self.locals[local]
+        {
+            // Can only happen with the other usage is _0, which requires us to remove the storage anyway.
+            if self.rev_locals[value].len() == 1 && self.reused_locals.contains(local) {
+                assert!(self.rev_locals[value][0] == local);
+                debug!(
+                    ?location,
+                    ?local,
+                    ?value,
+                    "local is used with a value that is reused, but it is the only local for this value"
+                );
+                self.storage_to_remove.insert(local);
+                return;
+            }
+            // The local that will store this value must be alive at this location.
+            self.maybe_storage_dead.seek_after_primary_effect(location);
+
+            // Find the all the reused locals that has this value.
+            for &local_with_value in self.rev_locals[value].iter().filter(|&&other| self.reused_locals.contains(other))
+            {
+                // If not, we remove the storage statement for this local, making it alive for the duration of the function.
+                if self.maybe_storage_dead.get().contains(local_with_value) {
+                    debug!(
+                        ?location,
+                        ?local,
+                        ?value,
+                        ?local_with_value,
+                        "local has a value from local_with_value that is maybe dead in this location"
+                    );
+                    self.storage_to_remove.insert(local_with_value);
+                } else {
+                    debug!(
+                        ?location,
+                        ?local,
+                        ?value,
+                        ?local_with_value,
+                        "local has a value from local_with_value that is alive in this location"
+                    );
+                }
+            }
         }
     }
 }
