@@ -6,7 +6,8 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 thread 'main' panicked at $DIR/panic-in-cleanup.rs:16:9:
 BOOM
 stack backtrace:
+panicked at $SRC_DIR_REAL/alloc/src/vec/mod.rs:LL:COL:
+unsafe precondition(s) violated: slice::from_raw_parts requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
 
-thread 'main' panicked at library/core/src/panicking.rs:$LINE:$COL:
-panic in a destructor during cleanup
-thread caused non-unwinding panic. aborting.
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+thread panicked while processing panic. aborting.

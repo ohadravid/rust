@@ -62,23 +62,22 @@ impl<'tcx> crate::MirPass<'tcx> for CopyProp {
             .iterate_to_fixpoint(tcx, body, None)
             .into_results_cursor(body);
 
-        let mut replacer = Replacer {
+        let mut storage_checker = StorageChecker {
+            copy_classes: ssa.copy_classes(),
+            maybe_storage_dead,
+            head_storage_to_check,
+            storage_to_remove,
+        };
+        
+        storage_checker.visit_body(body);
+
+        Replacer {
             tcx,
             copy_classes: ssa.copy_classes(),
             fully_moved,
             borrowed_locals: ssa.borrowed_locals(),
-            storage_to_remove,
-            head_storage_to_check,
-            maybe_storage_dead,
-        };
-
-        replacer.visit_body_preserves_cfg(body);
-
-        StorageRemover {
-            tcx,
-            storage_to_remove: replacer.storage_to_remove,
-        }
-        .visit_body_preserves_cfg(body);
+            storage_to_remove: storage_checker.storage_to_remove,
+        }.visit_body_preserves_cfg(body);
 
         if any_replacement {
             crate::simplify::remove_unused_definitions(body);
@@ -130,8 +129,6 @@ struct Replacer<'a, 'tcx> {
     tcx: TyCtxt<'tcx>,
     fully_moved: DenseBitSet<Local>,
     storage_to_remove: DenseBitSet<Local>,
-    head_storage_to_check: DenseBitSet<Local>,
-    maybe_storage_dead: ResultsCursor<'a, 'tcx, MaybeStorageDead<'a>>,
     borrowed_locals: &'a DenseBitSet<Local>,
     copy_classes: &'a IndexSlice<Local, Local>,
 }
@@ -141,21 +138,13 @@ impl<'tcx> MutVisitor<'tcx> for Replacer<'_, 'tcx> {
         self.tcx
     }
 
-    fn visit_local(&mut self, local: &mut Local, ctxt: PlaceContext, location: Location) {
+    fn visit_local(&mut self, local: &mut Local, ctxt: PlaceContext, _: Location) {
         let new_local = self.copy_classes[*local];
         // We must not unify two locals that are borrowed. But this is fine if one is borrowed and
         // the other is not. We chose to check the original local, and not the target. That way, if
         // the original local is borrowed and the target is not, we do not pessimize the whole class.
         if self.borrowed_locals.contains(*local) {
             return;
-        }
-
-        if ctxt.is_use() && self.head_storage_to_check.contains(new_local) {
-            self.maybe_storage_dead.seek_after_primary_effect(location);
-            if self.maybe_storage_dead.get().contains(new_local) {
-                debug!(?location, ?local, ?new_local, "replacing use of local with new_local at a location in which new_local maybe dead, marking it for storage removal");
-                self.storage_to_remove.insert(new_local);
-            }
         }
 
         match ctxt {
@@ -212,26 +201,23 @@ impl<'tcx> MutVisitor<'tcx> for Replacer<'_, 'tcx> {
     }
 }
 
-
-struct StorageRemover<'tcx> {
-    tcx: TyCtxt<'tcx>,
+struct StorageChecker<'a, 'tcx> {
     storage_to_remove: DenseBitSet<Local>,
+    head_storage_to_check: DenseBitSet<Local>,
+    maybe_storage_dead: ResultsCursor<'a, 'tcx, MaybeStorageDead<'a>>,
+    copy_classes: &'a IndexSlice<Local, Local>,
 }
 
-impl<'tcx> MutVisitor<'tcx> for StorageRemover<'tcx> {
-    fn tcx(&self) -> TyCtxt<'tcx> {
-        self.tcx
-    }
+impl<'a, 'tcx> Visitor<'tcx> for StorageChecker<'a, 'tcx> {
+    fn visit_local(&mut self, local: Local, context: PlaceContext, location: Location) {
+        let head = self.copy_classes[local];
 
-    fn visit_statement(&mut self, stmt: &mut Statement<'tcx>, loc: Location) {
-        match stmt.kind {
-            StatementKind::StorageLive(l) | StatementKind::StorageDead(l)
-                if self.storage_to_remove.contains(l) =>
-            {
-                stmt.make_nop();
-                return;
+        if context.is_use() && self.head_storage_to_check.contains(head) {
+            self.maybe_storage_dead.seek_after_primary_effect(location);
+            if self.maybe_storage_dead.get().contains(head) {
+                debug!(?location, ?local, ?head, "replacing use of local with head at a location in which head maybe dead, marking it for storage removal");
+                self.storage_to_remove.insert(head);
             }
-            _ => self.super_statement(stmt, loc),
         }
     }
 }
