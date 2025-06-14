@@ -37,8 +37,18 @@ impl<'tcx> crate::MirPass<'tcx> for CopyProp {
         let mut storage_to_remove = DenseBitSet::new_empty(fully_moved.domain_size());
         for (local, &head) in ssa.copy_classes().iter_enumerated() {
             if local != head {
-                // Since we'll replace all local instances with head, we can remove it's storage.
+                debug!(?local, ?head, "removing local's storage since it will be replaced by head");
+                // Since we'll replace all local instances with head, 
+                // we need to remove it's storage statements as they will point to an unused local.
                 storage_to_remove.insert(local);
+            }
+            
+            if !fully_moved.contains(head) {
+                debug!(?local, ?head, "removing head's storage since it is not fully moved");
+                // If the head is not fully moved, we must remove its storage statements since it might be accessed later.
+                storage_to_remove.insert(head);
+            } else {
+                debug!(?head, "keeping head's storage since it is fully moved");
             }
         }
 
