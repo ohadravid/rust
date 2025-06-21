@@ -245,6 +245,13 @@ impl<'tcx> Visitor<'tcx> for SsaVisitor<'_, 'tcx> {
                 self.check_dominates(local, loc);
                 self.direct_uses[local] += 1;
             }
+            PlaceContext::NonUse(NonUseContext::StorageLive) => {
+                // If the local is already assigned, than marking it _again_ as storage live
+                // deinitializes it, so need to treat if as a mutating use.
+                if let Set1::One(_) = self.assignments[local] {
+                    self.assignments[local] = Set1::Many;
+                }
+            }
             PlaceContext::NonUse(_) => {}
         }
     }
