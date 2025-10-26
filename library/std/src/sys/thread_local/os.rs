@@ -169,7 +169,15 @@ impl<T: 'static, const ALIGN: usize> Drop for AlignedBox<T, ALIGN> {
 
 impl<T: 'static, const ALIGN: usize> Storage<T, ALIGN> {
     pub const fn new() -> Storage<T, ALIGN> {
-        Storage { key: LazyKey::new(Some(destroy_value::<T, ALIGN>)), marker: PhantomData }
+        #[cfg(not(target_os = "windows"))]
+        let dtor = destroy_value::<T, ALIGN>;
+        #[cfg(target_os = "windows")]
+        let dtor = destroy_value_system::<T, ALIGN>;
+        
+        Storage { 
+            key: LazyKey::new(Some(dtor)), 
+            marker: PhantomData 
+        }
     }
 
     /// Gets a pointer to the TLS value, potentially initializing it with the
@@ -233,6 +241,11 @@ impl<T: 'static, const ALIGN: usize> Storage<T, ALIGN> {
         // SAFETY: We just created this value above.
         unsafe { &(*ptr).value }
     }
+}
+
+unsafe extern "system" fn destroy_value_system<T: 'static, const ALIGN: usize>(ptr: *const core::ffi::c_void) {
+    // SAFETY: ...
+    unsafe { destroy_value::<T, ALIGN>(ptr as *mut _) };
 }
 
 unsafe extern "C" fn destroy_value<T: 'static, const ALIGN: usize>(ptr: *mut u8) {

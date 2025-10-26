@@ -177,7 +177,7 @@ pub(crate) mod key {
             #[cfg(test)]
             mod tests;
             mod windows;
-            pub(super) use windows::{LazyKey, Key, create, get, set, destroy};
+            pub(super) use windows::{LazyKey, Key, get, set};
         }
         all(target_vendor = "fortanix", target_env = "sgx") => {
             mod racy;

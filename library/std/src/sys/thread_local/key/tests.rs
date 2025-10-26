@@ -29,7 +29,13 @@ fn destructors() {
     use crate::sync::Arc;
     use crate::thread;
 
+    #[cfg(not(target_os = "windows"))]
     unsafe extern "C" fn destruct(ptr: *mut u8) {
+        drop(unsafe { Arc::from_raw(ptr as *const ()) });
+    }
+
+    #[cfg(target_os = "windows")]
+    unsafe extern "system" fn destruct(ptr: *const core::ffi::c_void) {
         drop(unsafe { Arc::from_raw(ptr as *const ()) });
     }
 
