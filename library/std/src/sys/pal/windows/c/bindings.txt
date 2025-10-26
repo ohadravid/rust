@@ -2130,6 +2130,7 @@ FindExSearchNameMatch
 FindFirstFileExW
 FindNextFileW
 FIONBIO
+FLS_OUT_OF_INDEXES
 FlsAlloc
 FlsFree
 FlsGetValue

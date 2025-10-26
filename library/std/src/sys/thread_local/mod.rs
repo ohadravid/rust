@@ -35,6 +35,12 @@ cfg_select! {
         pub use no_threads::{EagerStorage, LazyStorage, thread_local_inner};
         pub(crate) use no_threads::{LocalPointer, local_pointer};
     }
+    // TODO: fix `target_thread_local` for windows?
+    target_os = "windows" => {
+        mod os;
+        pub use os::{Storage, thread_local_inner, value_align};
+        pub(crate) use os::{LocalPointer, local_pointer};
+    }
     target_thread_local => {
         mod native;
         pub use native::{EagerStorage, LazyStorage, thread_local_inner};
@@ -71,6 +77,9 @@ pub(crate) mod destructors {
             pub(super) use linux_like::register;
             pub(super) use list::run;
         }
+        target_os = "windows" => {
+            
+        }
         _ => {
             mod list;
             pub(super) use list::register;
@@ -89,8 +98,10 @@ pub(crate) mod guard {
             pub(crate) use apple::enable;
         }
         target_os = "windows" => {
-            mod windows;
-            pub(crate) use windows::enable;
+            pub(crate) fn enable() {
+                #[allow(unused)]
+                use crate::rt::thread_cleanup;
+            }
         }
         any(
             all(target_family = "wasm", not(
@@ -162,11 +173,11 @@ pub(crate) mod key {
             pub(super) use unix::get;
             use unix::{create, destroy};
         }
-        all(not(target_thread_local), target_os = "windows") => {
+        target_os = "windows" => {
             #[cfg(test)]
             mod tests;
             mod windows;
-            pub(super) use windows::{Key, LazyKey, get, run_dtors, set};
+            pub(super) use windows::{LazyKey, Key, create, get, set, destroy};
         }
         all(target_vendor = "fortanix", target_env = "sgx") => {
             mod racy;
