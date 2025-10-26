@@ -173,11 +173,8 @@ impl<T: 'static, const ALIGN: usize> Storage<T, ALIGN> {
         let dtor = destroy_value::<T, ALIGN>;
         #[cfg(target_os = "windows")]
         let dtor = destroy_value_system::<T, ALIGN>;
-        
-        Storage { 
-            key: LazyKey::new(Some(dtor)), 
-            marker: PhantomData 
-        }
+
+        Storage { key: LazyKey::new(Some(dtor)), marker: PhantomData }
     }
 
     /// Gets a pointer to the TLS value, potentially initializing it with the
@@ -243,7 +240,9 @@ impl<T: 'static, const ALIGN: usize> Storage<T, ALIGN> {
     }
 }
 
-unsafe extern "system" fn destroy_value_system<T: 'static, const ALIGN: usize>(ptr: *const core::ffi::c_void) {
+unsafe extern "system" fn destroy_value_system<T: 'static, const ALIGN: usize>(
+    ptr: *const core::ffi::c_void,
+) {
     // SAFETY: ...
     unsafe { destroy_value::<T, ALIGN>(ptr as *mut _) };
 }

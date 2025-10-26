@@ -35,7 +35,7 @@ cfg_select! {
         pub use no_threads::{EagerStorage, LazyStorage, thread_local_inner};
         pub(crate) use no_threads::{LocalPointer, local_pointer};
     }
-    // TODO: fix `target_thread_local` for windows?
+    // FIXME(ohadravid): fix `target_thread_local` for windows?
     target_os = "windows" => {
         mod os;
         pub use os::{Storage, thread_local_inner, value_align};
@@ -78,7 +78,7 @@ pub(crate) mod destructors {
             pub(super) use list::run;
         }
         target_os = "windows" => {
-            
+
         }
         _ => {
             mod list;
@@ -98,10 +98,8 @@ pub(crate) mod guard {
             pub(crate) use apple::enable;
         }
         target_os = "windows" => {
-            pub(crate) fn enable() {
-                #[allow(unused)]
-                use crate::rt::thread_cleanup;
-            }
+            mod windows;
+            pub(crate) use windows::enable;
         }
         any(
             all(target_family = "wasm", not(

@@ -17,11 +17,11 @@ pub type Dtor = unsafe extern "system" fn(*const core::ffi::c_void);
 #[inline]
 pub fn create(dtor: Option<Dtor>) -> Key {
     let key_result = unsafe { c::FlsAlloc(dtor) };
-    
+
     if key_result == c::FLS_OUT_OF_INDEXES {
         rtabort!("out of TLS keys");
     }
-    
+
     key_result
 }
 
@@ -41,7 +41,6 @@ pub unsafe fn destroy(key: Key) {
     let r = unsafe { c::FlsFree(key) };
     debug_assert_eq!(r, 0);
 }
-
 
 /// A type for TLS keys that are statically allocated.
 ///
@@ -83,12 +82,7 @@ impl LazyKey {
             key2
         };
         rtassert!(key != KEY_SENTVAL);
-        match self.key.compare_exchange(
-            KEY_SENTVAL,
-            key,
-            Ordering::Release,
-            Ordering::Acquire,
-        ) {
+        match self.key.compare_exchange(KEY_SENTVAL, key, Ordering::Release, Ordering::Acquire) {
             // The CAS succeeded, so we've created the actual key
             Ok(_) => key,
             // If someone beat us to the punch, use their key instead
