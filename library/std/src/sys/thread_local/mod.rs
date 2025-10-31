@@ -162,18 +162,6 @@ pub(crate) mod key {
             pub(super) use unix::get;
             use unix::{create, destroy};
         }
-        all(not(target_thread_local), target_os = "windows") => {
-            mod racy_windows;
-            #[cfg(test)]
-            mod tests;
-            mod windows;
-
-            pub(super) use racy_windows::{LazyKey};
-            pub(super) use windows::{Key, set};
-            #[cfg(test)]
-            pub(super) use windows::get;
-            use windows::{create, destroy};
-        }
         all(target_vendor = "fortanix", target_env = "sgx") => {
             mod racy;
             mod sgx;

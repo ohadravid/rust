@@ -127,11 +127,15 @@ unsafe fn inner_destroy<T>(ptr: *mut u8) {
 #[inline]
 #[cfg(target_os = "windows")]
 unsafe extern "system" fn destroy<T>(ptr: *const core::ffi::c_void) {
-    unsafe { inner_destroy::<T>(ptr as *mut _); }
+    unsafe {
+        inner_destroy::<T>(ptr as *mut _);
+    }
 }
 
 #[inline]
 #[cfg(not(target_os = "windows"))]
 unsafe extern "C" fn destroy<T>(ptr: *mut u8) {
-    unsafe { inner_destroy::<T>(ptr); }
+    unsafe {
+        inner_destroy::<T>(ptr);
+    }
 }
