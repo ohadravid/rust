@@ -31,13 +31,11 @@ pub unsafe fn set(key: Key, val: *mut u8) {
 }
 
 #[inline]
-#[cfg(any(not(target_thread_local), test))]
 pub unsafe fn get(key: Key) -> *mut u8 {
     unsafe { c::FlsGetValue(key).cast() }
 }
 
 #[inline]
-#[cfg(any(not(target_thread_local), test))]
 pub unsafe fn destroy(key: Key) {
     let r = unsafe { c::FlsFree(key) };
     debug_assert_eq!(r, 0);

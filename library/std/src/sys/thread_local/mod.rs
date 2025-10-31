@@ -71,10 +71,6 @@ pub(crate) mod destructors {
             pub(super) use linux_like::register;
             pub(super) use list::run;
         }
-        target_os = "windows" => {
-            mod windows;
-            pub(super) use windows::register;
-        }
         _ => {
             mod list;
             pub(super) use list::register;
@@ -166,20 +162,17 @@ pub(crate) mod key {
             pub(super) use unix::get;
             use unix::{create, destroy};
         }
-        target_os = "windows" => {
-            #[cfg(any(not(target_thread_local), test))]
+        all(not(target_thread_local), target_os = "windows") => {
             mod racy_windows;
             #[cfg(test)]
             mod tests;
             mod windows;
 
-            #[cfg(target_thread_local)]
-            pub(super) use windows::{Dtor, create, set};
-
-            #[cfg(any(not(target_thread_local), test))]
-            pub(super) use windows::{Key, get, destroy};
-            #[cfg(any(not(target_thread_local), test))]
             pub(super) use racy_windows::{LazyKey};
+            pub(super) use windows::{Key, set};
+            #[cfg(test)]
+            pub(super) use windows::get;
+            use windows::{create, destroy};
         }
         all(target_vendor = "fortanix", target_env = "sgx") => {
             mod racy;

@@ -91,6 +91,9 @@ pub static CALLBACK: unsafe extern "system" fn(*mut c_void, u32, *mut c_void) = 
 
 unsafe extern "system" fn tls_callback(_h: *mut c_void, dw_reason: u32, _pv: *mut c_void) {
     if dw_reason == c::DLL_THREAD_DETACH || dw_reason == c::DLL_PROCESS_DETACH {
+        #[cfg(target_thread_local)]
+        unsafe { super::super::destructors::run(); }
+
         crate::rt::thread_cleanup();
     }
 }

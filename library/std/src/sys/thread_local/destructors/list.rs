@@ -1,10 +1,15 @@
 use crate::cell::RefCell;
 use crate::sys::thread_local::guard;
 
-#[thread_local]
-static DTORS: RefCell<Vec<(*mut u8, unsafe extern "C" fn(*mut u8))>> = RefCell::new(Vec::new());
+#[cfg(not(target_os = "windows"))]
+type Dtor = unsafe extern "C" fn(*mut u8);
+#[cfg(target_os = "windows")]
+type Dtor = unsafe extern "system" fn(*const core::ffi::c_void);
 
-pub unsafe fn register(t: *mut u8, dtor: unsafe extern "C" fn(*mut u8)) {
+#[thread_local]
+static DTORS: RefCell<Vec<(*mut u8, Dtor)>> = RefCell::new(Vec::new());
+
+pub unsafe fn register(t: *mut u8, dtor: Dtor) {
     let Ok(mut dtors) = DTORS.try_borrow_mut() else {
         // This point can only be reached if the global allocator calls this
         // function again.
@@ -31,7 +36,7 @@ pub unsafe fn run() {
             Some((t, dtor)) => {
                 drop(dtors);
                 unsafe {
-                    dtor(t);
+                    dtor(t as *mut _);
                 }
             }
             None => {
