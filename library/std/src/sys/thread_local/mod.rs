@@ -35,12 +35,6 @@ cfg_select! {
         pub use no_threads::{EagerStorage, LazyStorage, thread_local_inner};
         pub(crate) use no_threads::{LocalPointer, local_pointer};
     }
-    // FIXME(ohadravid): fix `target_thread_local` for windows?
-    target_os = "windows" => {
-        mod os;
-        pub use os::{Storage, thread_local_inner, value_align};
-        pub(crate) use os::{LocalPointer, local_pointer};
-    }
     target_thread_local => {
         mod native;
         pub use native::{EagerStorage, LazyStorage, thread_local_inner};
@@ -78,7 +72,8 @@ pub(crate) mod destructors {
             pub(super) use list::run;
         }
         target_os = "windows" => {
-
+            mod windows;
+            pub(super) use windows::register;
         }
         _ => {
             mod list;
@@ -172,10 +167,19 @@ pub(crate) mod key {
             use unix::{create, destroy};
         }
         target_os = "windows" => {
+            #[cfg(any(not(target_thread_local), test))]
+            mod racy_windows;
             #[cfg(test)]
             mod tests;
             mod windows;
-            pub(super) use windows::{LazyKey, Key, get, set};
+
+            #[cfg(target_thread_local)]
+            pub(super) use windows::{Dtor, create, set};
+
+            #[cfg(any(not(target_thread_local), test))]
+            pub(super) use windows::{Key, get, destroy};
+            #[cfg(any(not(target_thread_local), test))]
+            pub(super) use racy_windows::{LazyKey};
         }
         all(target_vendor = "fortanix", target_env = "sgx") => {
             mod racy;

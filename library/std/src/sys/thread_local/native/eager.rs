@@ -61,7 +61,7 @@ impl<T> Storage<T> {
 /// * Must only be called at thread destruction.
 /// * `ptr` must point to an instance of `Storage` with `Alive` state and be
 ///   valid for accessing that instance.
-unsafe extern "C" fn destroy<T>(ptr: *mut u8) {
+unsafe fn inner_destroy<T>(ptr: *mut u8) {
     // Print a nice abort message if a panic occurs.
     abort_on_dtor_unwind(|| {
         let storage = unsafe { &*(ptr as *const Storage<T>) };
@@ -72,4 +72,16 @@ unsafe extern "C" fn destroy<T>(ptr: *mut u8) {
             drop_in_place(storage.val.get());
         }
     })
+}
+
+#[inline]
+#[cfg(target_os = "windows")]
+unsafe extern "system" fn destroy<T>(ptr: *const core::ffi::c_void) {
+    unsafe { inner_destroy::<T>(ptr as *mut _); }
+}
+
+#[inline]
+#[cfg(not(target_os = "windows"))]
+unsafe extern "C" fn destroy<T>(ptr: *mut u8) {
+    unsafe { inner_destroy::<T>(ptr); }
 }
