@@ -1,7 +1,7 @@
 //! Implement thread-local storage.
 
-use std::collections::BTreeMap;
 use std::collections::btree_map::Entry as BTreeEntry;
+use std::collections::{BTreeMap, VecDeque};
 use std::task::Poll;
 
 use rustc_abi::{ExternAbi, HasDataLayout, Size};
@@ -186,6 +186,18 @@ impl<'tcx> TlsData<'tcx> {
         None
     }
 
+    fn get_tls_value_and_dtor(
+        &self,
+        key: TlsKey,
+        thread_id: ThreadId,
+    ) -> Option<(ty::Instance<'tcx>, Scalar, Span)> {
+        let TlsEntry { data, dtor } = self.keys.get(&key)?;
+        let (dtor, span) = dtor.to_owned()?;
+        let data_scalar = data.get(&thread_id)?;
+
+        Some((dtor, *data_scalar, span))
+    }
+
     /// Delete all TLS entries for the given thread. This function should be
     /// called after all TLS destructors have already finished.
     fn delete_all_thread_tls(&mut self, thread_id: ThreadId) {
@@ -223,9 +235,9 @@ enum TlsDtorsStatePriv<'tcx> {
     PthreadDtors(RunningDtorState),
     /// For Windows, we support two different ways dtors can be registered.
     /// 1. Functions that are registered via the `FlsAlloc` function, which are invoked one by one.
-    /// 2. Functions from the magic `.CRT$XLB` linker section. 
+    /// 2. Functions from the magic `.CRT$XLB` linker section.
     ///    We store these as a list of functions that we still have to call.
-    WindowsDtors(RunningDtorState, Vec<(ImmTy<'tcx>, Span)>),
+    WindowsDtors(VecDeque<TlsKey>, Vec<(ImmTy<'tcx>, Span)>),
     Done,
 }
 
@@ -252,8 +264,10 @@ impl<'tcx> TlsDtorsState<'tcx> {
                         Os::Windows => {
                             // Determine which destructors to run.
                             let dtors = this.lookup_windows_tls_dtors()?;
+                            let all_keys = this.lookup_windows_fls_dtors()?;
+
                             // And move to the next state, that runs them.
-                            break 'new_state WindowsDtors(Default::default(), dtors);
+                            break 'new_state WindowsDtors(all_keys, dtors);
                         }
                         _ => {
                             // No TLS dtor support.
@@ -314,6 +328,12 @@ trait EvalContextPrivExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
         interp_ok(this.lookup_link_section(|section| section == ".CRT$XLB")?)
     }
 
+    fn lookup_windows_fls_dtors(&mut self) -> InterpResult<'tcx, VecDeque<TlsKey>> {
+        let this = self.eval_context_mut();
+
+        interp_ok(this.machine.tls.keys.keys().cloned().collect())
+    }
+
     fn schedule_windows_tls_dtor(&mut self, dtor: ImmTy<'tcx>, span: Span) -> InterpResult<'tcx> {
         let this = self.eval_context_mut();
 
@@ -370,16 +390,6 @@ trait EvalContextPrivExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
         &mut self,
         state: &mut RunningDtorState,
     ) -> InterpResult<'tcx, Poll<()>> {
-        self.schedule_next_tls_dtor_callback(state, ExternAbi::C { unwind: false })
-    }
-
-    /// Schedule a TLS destructor. Returns `true` if found
-    /// a destructor to schedule, and `false` otherwise.
-    fn schedule_next_tls_dtor_callback(
-        &mut self,
-        state: &mut RunningDtorState,
-        caller_abi: ExternAbi,
-    ) -> InterpResult<'tcx, Poll<()>> {
         let this = self.eval_context_mut();
         let active_thread = this.active_thread();
 
@@ -399,7 +409,7 @@ trait EvalContextPrivExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
 
             this.call_thread_root_function(
                 instance,
-                caller_abi,
+                ExternAbi::C { unwind: false },
                 &[ImmTy::from_scalar(ptr, this.machine.layouts.mut_raw_ptr)],
                 None,
                 span,
@@ -411,12 +421,45 @@ trait EvalContextPrivExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
         interp_ok(Poll::Ready(()))
     }
 
-    /// Schedule a Windows FLS destructor. Returns `true` if found
-    /// a destructor to schedule, and `false` otherwise.
+    /// Schedule a Windows FLS destructor, if one is found.
     fn schedule_next_windows_fls_dtor(
         &mut self,
-        state: &mut RunningDtorState,
+        remaining_keys: &mut VecDeque<TlsKey>,
     ) -> InterpResult<'tcx, Poll<()>> {
-        self.schedule_next_tls_dtor_callback(state, ExternAbi::System { unwind: false })
+        let this = self.eval_context_mut();
+        let active_thread = this.active_thread();
+
+        let key = match remaining_keys.pop_front() {
+            // We are done scheduling all the keys.
+            None => return interp_ok(Poll::Ready(())),
+            Some(key) => key,
+        };
+
+        // Fetch dtor for this `key`.
+        let dtor = match this.machine.tls.get_tls_value_and_dtor(key, active_thread) {
+            dtor @ Some(_) => dtor,
+            // If non exists, move on to the next key.
+            None => return self.schedule_next_windows_fls_dtor(remaining_keys),
+        };
+
+        // Schedule the key's dtor if it is non-zero, or more on the next key if it is,
+        if let Some((instance, ptr, span)) = dtor {
+            if ptr.to_target_usize(this)? == 0 {
+                return self.schedule_next_windows_fls_dtor(remaining_keys);
+            }
+            trace!("Running TLS dtor {:?} on {:?} at {:?}", instance, ptr, active_thread);
+
+            this.call_thread_root_function(
+                instance,
+                ExternAbi::System { unwind: false },
+                &[ImmTy::from_scalar(ptr, this.machine.layouts.mut_raw_ptr)],
+                None,
+                span,
+            )?;
+
+            return interp_ok(Poll::Pending);
+        }
+
+        interp_ok(Poll::Ready(()))
     }
 }
