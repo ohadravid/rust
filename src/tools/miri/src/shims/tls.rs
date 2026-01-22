@@ -264,10 +264,10 @@ impl<'tcx> TlsDtorsState<'tcx> {
                         Os::Windows => {
                             // Determine which destructors to run.
                             let dtors = this.lookup_windows_tls_dtors()?;
-                            let all_keys = this.lookup_windows_fls_dtors()?;
+                            let fls_keys_with_dtors = this.lookup_windows_fls_keys_with_dtors()?;
 
                             // And move to the next state, that runs them.
-                            break 'new_state WindowsDtors(all_keys, dtors);
+                            break 'new_state WindowsDtors(fls_keys_with_dtors, dtors);
                         }
                         _ => {
                             // No TLS dtor support.
@@ -328,10 +328,19 @@ trait EvalContextPrivExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
         interp_ok(this.lookup_link_section(|section| section == ".CRT$XLB")?)
     }
 
-    fn lookup_windows_fls_dtors(&mut self) -> InterpResult<'tcx, VecDeque<TlsKey>> {
+    /// Lookup all the FLS (which are stored as TLS) keys that have a destructor.
+    /// See also: `schedule_next_windows_fls_dtor`.
+    fn lookup_windows_fls_keys_with_dtors(&mut self) -> InterpResult<'tcx, VecDeque<TlsKey>> {
         let this = self.eval_context_mut();
 
-        interp_ok(this.machine.tls.keys.keys().cloned().collect())
+        interp_ok(
+            this.machine
+                .tls
+                .keys
+                .iter()
+                .filter_map(|(key, data)| data.dtor.map(|_| *key))
+                .collect(),
+        )
     }
 
     fn schedule_windows_tls_dtor(&mut self, dtor: ImmTy<'tcx>, span: Span) -> InterpResult<'tcx> {
@@ -429,6 +438,18 @@ trait EvalContextPrivExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
         let this = self.eval_context_mut();
         let active_thread = this.active_thread();
 
+        // According to [PflsCallbackFunction's docs],
+        // > If the FLS slot is in use, `FlsCallback`` is called on .. thread exit ..
+        // However, the exact order and semantics are not defined.
+        // We use the following implementation, which matches both observed behavior and
+        // Wine's implementation of the same logic in the [`RtlProcessFlsData`] function.
+        // 1. Fetch all the keys once (in `lookup_windows_fls_dtors`).
+        // 2. Go over them one by one, in order.
+        // 3. Fetch the value associated with the key.
+        // 4. If it is non-zero, call the registered dtor.
+        // New keys registered during thread exit are ignored, but values set before the dtor is scheduled are visible.
+        // [PflsCallbackFunction's docs]: https://learn.microsoft.com/en-us/windows/win32/api/winnt/nc-winnt-pfls_callback_function
+        // [`RtlProcessFlsData`]: https://github.com/wine-mirror/wine/blob/wine-11.0/dlls/ntdll/thread.c#L679
         let key = match remaining_keys.pop_front() {
             // We are done scheduling all the keys.
             None => return interp_ok(Poll::Ready(())),
