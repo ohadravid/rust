@@ -6,7 +6,6 @@
 //! If you wonder why there's no `early.rs`, that's because it's split into three files -
 //! `build_reduced_graph.rs`, `macros.rs` and `imports.rs`.
 
-use std::assert_matches::debug_assert_matches;
 use std::borrow::Cow;
 use std::collections::hash_map::Entry;
 use std::mem::{replace, swap, take};
@@ -16,6 +15,7 @@ use rustc_ast::visit::{
     AssocCtxt, BoundKind, FnCtxt, FnKind, Visitor, try_visit, visit_opt, walk_list,
 };
 use rustc_ast::*;
+use rustc_data_structures::debug_assert_matches;
 use rustc_data_structures::fx::{FxHashMap, FxHashSet, FxIndexMap};
 use rustc_data_structures::unord::{UnordMap, UnordSet};
 use rustc_errors::codes::*;
@@ -37,7 +37,7 @@ use rustc_session::config::{CrateType, ResolveDocLinks};
 use rustc_session::lint;
 use rustc_session::parse::feature_err;
 use rustc_span::source_map::{Spanned, respan};
-use rustc_span::{BytePos, DUMMY_SP, Ident, Span, Symbol, SyntaxContext, kw, sym};
+use rustc_span::{BytePos, DUMMY_SP, Ident, Macros20NormalizedIdent, Span, Symbol, kw, sym};
 use smallvec::{SmallVec, smallvec};
 use thin_vec::ThinVec;
 use tracing::{debug, instrument, trace};
@@ -1069,8 +1069,20 @@ impl<'ast, 'ra, 'tcx> Visitor<'ast> for LateResolutionVisitor<'_, 'ast, 'ra, 'tc
         debug!("(resolving function) entering function");
 
         if let FnKind::Fn(_, _, f) = fn_kind {
-            for EiiImpl { node_id, eii_macro_path, .. } in &f.eii_impls {
-                self.smart_resolve_path(*node_id, &None, &eii_macro_path, PathSource::Macro);
+            for EiiImpl { node_id, eii_macro_path, known_eii_macro_resolution, .. } in &f.eii_impls
+            {
+                // See docs on the `known_eii_macro_resolution` field:
+                // if we already know the resolution statically, don't bother resolving it.
+                if let Some(target) = known_eii_macro_resolution {
+                    self.smart_resolve_path(
+                        *node_id,
+                        &None,
+                        &target.foreign_item,
+                        PathSource::Expr(None),
+                    );
+                } else {
+                    self.smart_resolve_path(*node_id, &None, &eii_macro_path, PathSource::Macro);
+                }
             }
         }
 
@@ -2917,8 +2929,8 @@ impl<'a, 'ast, 'ra, 'tcx> LateResolutionVisitor<'a, 'ast, 'ra, 'tcx> {
                     self.parent_scope.macro_rules = self.r.macro_rules_scopes[&def_id];
                 }
 
-                if let Some(EiiExternTarget { extern_item_path, impl_unsafe: _, span: _ }) =
-                    &macro_def.eii_extern_target
+                if let Some(EiiDecl { foreign_item: extern_item_path, impl_unsafe: _ }) =
+                    &macro_def.eii_declaration
                 {
                     self.smart_resolve_path(
                         item.id,
@@ -3629,7 +3641,7 @@ impl<'a, 'ast, 'ra, 'tcx> LateResolutionVisitor<'a, 'ast, 'ra, 'tcx> {
             return;
         };
         ident.span.normalize_to_macros_2_0_and_adjust(module.expansion);
-        let key = BindingKey::new(ident, ns);
+        let key = BindingKey::new(Macros20NormalizedIdent::new(ident), ns);
         let mut decl = self.r.resolution(module, key).and_then(|r| r.best_decl());
         debug!(?decl);
         if decl.is_none() {
@@ -3640,7 +3652,7 @@ impl<'a, 'ast, 'ra, 'tcx> LateResolutionVisitor<'a, 'ast, 'ra, 'tcx> {
                 TypeNS => ValueNS,
                 _ => ns,
             };
-            let key = BindingKey::new(ident, ns);
+            let key = BindingKey::new(Macros20NormalizedIdent::new(ident), ns);
             decl = self.r.resolution(module, key).and_then(|r| r.best_decl());
             debug!(?decl);
         }
@@ -5210,7 +5222,7 @@ impl<'a, 'ast, 'ra, 'tcx> LateResolutionVisitor<'a, 'ast, 'ra, 'tcx> {
         self.r.traits_in_scope(
             self.current_trait_ref.as_ref().map(|(module, _)| *module),
             &self.parent_scope,
-            ident.span.ctxt(),
+            ident.span,
             Some((ident.name, ns)),
         )
     }
@@ -5309,7 +5321,7 @@ impl<'a, 'ast, 'ra, 'tcx> LateResolutionVisitor<'a, 'ast, 'ra, 'tcx> {
                 .entry(self.parent_scope.module.nearest_parent_mod().expect_local())
                 .or_insert_with(|| {
                     self.r
-                        .traits_in_scope(None, &self.parent_scope, SyntaxContext::root(), None)
+                        .traits_in_scope(None, &self.parent_scope, DUMMY_SP, None)
                         .into_iter()
                         .filter_map(|tr| {
                             if self.is_invalid_proc_macro_item_for_doc(tr.def_id) {

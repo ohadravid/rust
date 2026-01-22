@@ -14,7 +14,7 @@ use std::{env, fs, iter};
 
 use build_helper::exit;
 
-use crate::core::build_steps::compile::{Std, run_cargo};
+use crate::core::build_steps::compile::{ArtifactKeepMode, Std, run_cargo};
 use crate::core::build_steps::doc::{DocumentationFormat, prepare_doc_compiler};
 use crate::core::build_steps::gcc::{Gcc, GccTargetPair, add_cg_gcc_cargo_flags};
 use crate::core::build_steps::llvm::get_llvm_version;
@@ -927,8 +927,9 @@ impl Step for Clippy {
 
         cargo.env("RUSTC_TEST_SUITE", builder.rustc(build_compiler));
         cargo.env("RUSTC_LIB_PATH", builder.rustc_libdir(build_compiler));
-        let host_libs =
-            builder.stage_out(build_compiler, Mode::ToolRustcPrivate).join(builder.cargo_dir());
+        let host_libs = builder
+            .stage_out(build_compiler, Mode::ToolRustcPrivate)
+            .join(builder.cargo_dir(Mode::ToolRustcPrivate));
         cargo.env("HOST_LIBS", host_libs);
 
         // Build the standard library that the tests can use.
@@ -1625,6 +1626,12 @@ test!(RunMakeCargo {
     suite: "run-make-cargo",
     default: true
 });
+test!(BuildStd {
+    path: "tests/build-std",
+    mode: CompiletestMode::RunMake,
+    suite: "build-std",
+    default: false
+});
 
 test!(AssemblyLlvm {
     path: "tests/assembly-llvm",
@@ -1948,7 +1955,7 @@ NOTE: if you're sure you want to do this, please open an issue as to why. In the
             let stage0_rustc_path = builder.compiler(0, test_compiler.host);
             cmd.arg("--stage0-rustc-path").arg(builder.rustc(stage0_rustc_path));
 
-            if suite == "run-make-cargo" {
+            if matches!(suite, "run-make-cargo" | "build-std") {
                 let cargo_path = if test_compiler.stage == 0 {
                     // If we're using `--stage 0`, we should provide the bootstrap cargo.
                     builder.initial_cargo.clone()
@@ -2587,7 +2594,8 @@ impl BookTest {
                 let stamp = BuildStamp::new(&builder.cargo_out(test_compiler, mode, target))
                     .with_prefix(PathBuf::from(dep).file_name().and_then(|v| v.to_str()).unwrap());
 
-                let output_paths = run_cargo(builder, cargo, vec![], &stamp, vec![], false, false);
+                let output_paths =
+                    run_cargo(builder, cargo, vec![], &stamp, vec![], ArtifactKeepMode::OnlyRlib);
                 let directories = output_paths
                     .into_iter()
                     .filter_map(|p| p.parent().map(ToOwned::to_owned))

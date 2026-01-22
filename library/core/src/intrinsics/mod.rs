@@ -52,7 +52,6 @@
                       in the rest of the standard library",
     issue = "none"
 )]
-#![allow(missing_docs)]
 
 use crate::ffi::va_list::{VaArgSafe, VaList};
 use crate::marker::{ConstParamTy, Destruct, DiscriminantKind, PointeeSized, Tuple};
@@ -60,6 +59,7 @@ use crate::{mem, ptr};
 
 mod bounds;
 pub mod fallback;
+pub mod gpu;
 pub mod mir;
 pub mod simd;
 
@@ -71,6 +71,7 @@ use crate::sync::atomic::{self, AtomicBool, AtomicI32, AtomicIsize, AtomicU32, O
 /// A type for atomic ordering parameters for intrinsics. This is a separate type from
 /// `atomic::Ordering` so that we can make it `ConstParamTy` and fix the values used here without a
 /// risk of leaking that to stable code.
+#[allow(missing_docs)]
 #[derive(Debug, ConstParamTy, PartialEq, Eq)]
 pub enum AtomicOrdering {
     // These values must match the compiler's `AtomicOrdering` defined in
@@ -2618,7 +2619,7 @@ pub const unsafe fn const_allocate(_size: usize, _align: usize) -> *mut u8 {
 }
 
 /// Deallocates a memory which allocated by `intrinsics::const_allocate` at compile time.
-/// At runtime, does nothing.
+/// At runtime, it does nothing.
 ///
 /// # Safety
 ///
@@ -2636,6 +2637,9 @@ pub const unsafe fn const_deallocate(_ptr: *mut u8, _size: usize, _align: usize)
     // Runtime NOP
 }
 
+/// Convert the allocation this pointer points to into immutable global memory.
+/// The pointer must point to the beginning of a heap allocation.
+/// This operation only makes sense during compile time. At runtime, it does nothing.
 #[rustc_const_unstable(feature = "const_heap", issue = "79597")]
 #[rustc_nounwind]
 #[rustc_intrinsic]
@@ -2844,6 +2848,15 @@ pub const unsafe fn size_of_val<T: ?Sized>(ptr: *const T) -> usize;
 #[rustc_intrinsic]
 #[rustc_intrinsic_const_stable_indirect]
 pub const unsafe fn align_of_val<T: ?Sized>(ptr: *const T) -> usize;
+
+/// Compute the type information of a concrete type.
+/// It can only be called at compile time, the backends do
+/// not implement it.
+#[rustc_intrinsic]
+#[unstable(feature = "core_intrinsics", issue = "none")]
+pub const fn type_of(_id: crate::any::TypeId) -> crate::mem::type_info::Type {
+    panic!("`TypeId::info` can only be called at compile-time")
+}
 
 /// Gets a static string slice containing the name of a type.
 ///
@@ -3441,19 +3454,6 @@ pub(crate) const fn miri_promise_symbolic_alignment(ptr: *const (), align: usize
     )
 }
 
-/// Copies the current location of arglist `src` to the arglist `dst`.
-///
-/// # Safety
-///
-/// You must check the following invariants before you call this function:
-///
-/// - `dest` must be non-null and point to valid, writable memory.
-/// - `dest` must not alias `src`.
-///
-#[rustc_intrinsic]
-#[rustc_nounwind]
-pub unsafe fn va_copy<'f>(dest: *mut VaList<'f>, src: &VaList<'f>);
-
 /// Loads an argument of type `T` from the `va_list` `ap` and increment the
 /// argument `ap` points to.
 ///
@@ -3472,7 +3472,28 @@ pub unsafe fn va_copy<'f>(dest: *mut VaList<'f>, src: &VaList<'f>);
 #[rustc_nounwind]
 pub unsafe fn va_arg<T: VaArgSafe>(ap: &mut VaList<'_>) -> T;
 
-/// Destroy the arglist `ap` after initialization with `va_start` or `va_copy`.
+/// Duplicates a variable argument list. The returned list is initially at the same position as
+/// the one in `src`, but can be advanced independently.
+///
+/// Codegen backends should not have custom behavior for this intrinsic, they should always use
+/// this fallback implementation. This intrinsic *does not* map to the LLVM `va_copy` intrinsic.
+///
+/// This intrinsic exists only as a hook for Miri and constant evaluation, and is used to detect UB
+/// when a variable argument list is used incorrectly.
+#[rustc_intrinsic]
+#[rustc_nounwind]
+pub fn va_copy<'f>(src: &VaList<'f>) -> VaList<'f> {
+    src.duplicate()
+}
+
+/// Destroy the variable argument list `ap` after initialization with `va_start` (part of the
+/// desugaring of `...`) or `va_copy`.
+///
+/// Code generation backends should not provide a custom implementation for this intrinsic. This
+/// intrinsic *does not* map to the LLVM `va_end` intrinsic.
+///
+/// This function is a no-op on all current targets, but used as a hook for const evaluation to
+/// detect UB when a variable argument list is used incorrectly.
 ///
 /// # Safety
 ///
@@ -3480,4 +3501,6 @@ pub unsafe fn va_arg<T: VaArgSafe>(ap: &mut VaList<'_>) -> T;
 ///
 #[rustc_intrinsic]
 #[rustc_nounwind]
-pub unsafe fn va_end(ap: &mut VaList<'_>);
+pub unsafe fn va_end(ap: &mut VaList<'_>) {
+    /* deliberately does nothing */
+}

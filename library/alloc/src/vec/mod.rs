@@ -743,7 +743,7 @@ impl<T> Vec<T> {
     /// }
     /// ```
     #[inline]
-    #[unstable(feature = "box_vec_non_null", reason = "new API", issue = "130364")]
+    #[unstable(feature = "box_vec_non_null", issue = "130364")]
     pub unsafe fn from_parts(ptr: NonNull<T>, length: usize, capacity: usize) -> Self {
         unsafe { Self::from_parts_in(ptr, length, capacity, Global) }
     }
@@ -793,7 +793,7 @@ impl<T> Vec<T> {
     /// ```
     #[cfg(not(no_global_oom_handling))]
     #[inline]
-    #[unstable(feature = "vec_from_fn", reason = "new API", issue = "149698")]
+    #[unstable(feature = "vec_from_fn", issue = "149698")]
     pub fn from_fn<F>(length: usize, f: F) -> Self
     where
         F: FnMut(usize) -> T,
@@ -878,7 +878,7 @@ impl<T> Vec<T> {
     /// assert_eq!(rebuilt, [4294967295, 0, 1]);
     /// ```
     #[must_use = "losing the pointer will leak memory"]
-    #[unstable(feature = "box_vec_non_null", reason = "new API", issue = "130364")]
+    #[unstable(feature = "box_vec_non_null", issue = "130364")]
     pub fn into_parts(self) -> (NonNull<T>, usize, usize) {
         let (ptr, len, capacity) = self.into_raw_parts();
         // SAFETY: A `Vec` always has a non-null pointer.
@@ -1291,7 +1291,7 @@ impl<T, A: Allocator> Vec<T, A> {
     /// }
     /// ```
     #[inline]
-    #[unstable(feature = "allocator_api", reason = "new API", issue = "32838")]
+    #[unstable(feature = "allocator_api", issue = "32838")]
     // #[unstable(feature = "box_vec_non_null", issue = "130364")]
     pub unsafe fn from_parts_in(ptr: NonNull<T>, length: usize, capacity: usize, alloc: A) -> Self {
         ub_checks::assert_unsafe_precondition!(
@@ -1390,7 +1390,7 @@ impl<T, A: Allocator> Vec<T, A> {
     /// ```
     #[must_use = "losing the pointer will leak memory"]
     #[unstable(feature = "allocator_api", issue = "32838")]
-    // #[unstable(feature = "box_vec_non_null", reason = "new API", issue = "130364")]
+    // #[unstable(feature = "box_vec_non_null", issue = "130364")]
     pub fn into_parts_with_alloc(self) -> (NonNull<T>, usize, usize, A) {
         let (ptr, len, capacity, alloc) = self.into_raw_parts_with_alloc();
         // SAFETY: A `Vec` always has a non-null pointer.
@@ -1747,7 +1747,11 @@ impl<T, A: Allocator> Vec<T, A> {
         // * We only construct `&mut` references to `self.buf` through `&mut self` methods; borrow-
         //   check ensures that it is not possible to mutably alias `self.buf` within the
         //   returned lifetime.
-        unsafe { slice::from_raw_parts(self.as_ptr(), self.len) }
+        unsafe {
+            // normally this would use `slice::from_raw_parts`, but it's
+            // instantiated often enough that avoiding the UB check is worth it
+            &*core::intrinsics::aggregate_raw_ptr::<*const [T], _, _>(self.as_ptr(), self.len)
+        }
     }
 
     /// Extracts a mutable slice of the entire vector.
@@ -1779,7 +1783,11 @@ impl<T, A: Allocator> Vec<T, A> {
         // * We only construct references to `self.buf` through `&self` and `&mut self` methods;
         //   borrow-check ensures that it is not possible to construct a reference to `self.buf`
         //   within the returned lifetime.
-        unsafe { slice::from_raw_parts_mut(self.as_mut_ptr(), self.len) }
+        unsafe {
+            // normally this would use `slice::from_raw_parts_mut`, but it's
+            // instantiated often enough that avoiding the UB check is worth it
+            &mut *core::intrinsics::aggregate_raw_ptr::<*mut [T], _, _>(self.as_mut_ptr(), self.len)
+        }
     }
 
     /// Returns a raw pointer to the vector's buffer, or a dangling raw pointer
@@ -1986,8 +1994,8 @@ impl<T, A: Allocator> Vec<T, A> {
     /// [`as_mut_ptr`]: Vec::as_mut_ptr
     /// [`as_ptr`]: Vec::as_ptr
     /// [`as_non_null`]: Vec::as_non_null
-    #[unstable(feature = "box_vec_non_null", reason = "new API", issue = "130364")]
-    #[rustc_const_unstable(feature = "box_vec_non_null", reason = "new API", issue = "130364")]
+    #[unstable(feature = "box_vec_non_null", issue = "130364")]
+    #[rustc_const_unstable(feature = "box_vec_non_null", issue = "130364")]
     #[inline]
     pub const fn as_non_null(&mut self) -> NonNull<T> {
         self.buf.non_null()
