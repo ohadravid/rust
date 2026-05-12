@@ -44,8 +44,11 @@ fn is_thread_a_fiber() -> bool {
 static KEY: AtomicU32 = AtomicU32::new(FLS_OUT_OF_INDEXES);
 
 pub fn enable() {
-    #[thread_local]
-    static REGISTERED: Cell<bool> = Cell::new(false);
+    // `#[thread_local]` is unavailable on windows-gnu (`target_thread_local` is off).
+    // Use `thread_local!`, which falls back to `TlsAlloc` when needed.
+    thread_local! {
+        static REGISTERED: Cell<bool> = const { Cell::new(false) };
+    }
 
     if !REGISTERED.replace(true) {
         let current_key = KEY.load(Ordering::Acquire);
