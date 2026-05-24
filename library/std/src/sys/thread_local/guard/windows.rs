@@ -9,7 +9,7 @@
 //!
 //! [1]: https://devblogs.microsoft.com/oldnewthing/20191011-00/?p=102989
 
-use core::ffi::c_void;
+use core::ffi::{c_int, c_void};
 use core::sync::atomic::{AtomicU32, Ordering};
 
 use crate::cell::Cell;
@@ -62,19 +62,63 @@ pub fn enable() {
 
             // Now we need to set this key to be used by everyone else.
             // If we won the race, our key is the right one and we can set it to non-null value.
-            // If we lost, we'll use the winning key.
-            // Note: we are not freeing our losing key since according to the docs
-            // > It is expected that DLLs call [the FlsFree] function (if at all) only during DLL_PROCESS_DETACH.
+            // If we lost, we'll use the winning key and free our losing key.
             match KEY.compare_exchange(current_key, new_key, Ordering::Release, Ordering::Acquire) {
                 Ok(_) => new_key,
-                Err(other_key) => other_key,
+                Err(other_key) => {
+                    unsafe { c::FlsFree(new_key) };
+                    other_key
+                }
             }
         };
+
+        // Handle DLL unloading gracefully by freeing the FLS key manually.
+        unsafe extern "C" {
+            pub fn atexit(cb: unsafe extern "C" fn()) -> c_int;
+        }
+        let _ = unsafe { atexit(free_fls_key_at_exit) };
 
         // Setting the key's value to non-zero will cause the dtor callback to be called when the thread exits.
         // We only set the key once per thread, so the destructors are guaranteed to run at most once (fibers cannot be moved between threads).
         unsafe { set(key, ptr::without_provenance(1)) };
     }
+}
+
+extern "C" fn free_fls_key_at_exit() {
+    // If the current DLL is unloaded, the registered `cleanup` hook will not be available later during thread exit,
+    // triggering a `STATUS_ACCESS_VIOLATION`.
+    // Manually free the FLS slot to avoid this.
+    
+    // If the entire process is shutting down, which is the more common case, we don't need to do that.
+    if is_shutdown_in_progress() {
+        return;
+    }
+    
+    let current_key = KEY.swap(c::FLS_OUT_OF_INDEXES, Ordering::AcqRel);
+    if current_key != c::FLS_OUT_OF_INDEXES {
+        unsafe { c::FlsFree(current_key) };
+    }
+}
+
+#[cfg(not(target_vendor = "win7"))]
+fn is_shutdown_in_progress() -> bool {
+    #[link(name = "ntdll")]
+    unsafe extern "system" {
+        /// Returns TRUE (non-zero) if the process is terminating.
+        /// Returns FALSE (0) if we are dynamically unloading a DLL.
+        pub fn RtlDllShutdownInProgress() -> u8;
+    }
+
+    unsafe { RtlDllShutdownInProgress() != 0 }
+}
+
+
+#[cfg(target_vendor = "win7")]
+fn is_shutdown_in_progress() -> bool { 
+    // `RtlDllShutdownInProgress` is unavailable before Windows 10,
+    // so assume the process is shutting down and free the FLS key manually
+    // to avoid a potential crash during DLL unloading.
+    true 
 }
 
 unsafe extern "system" fn cleanup(_ptr: *const c_void) {
