@@ -88,12 +88,12 @@ extern "C" fn free_fls_key_at_exit() {
     // If the current DLL is unloaded, the registered `cleanup` hook will not be available later during thread exit,
     // triggering a `STATUS_ACCESS_VIOLATION`.
     // Manually free the FLS slot to avoid this.
-    
+
     // If the entire process is shutting down, which is the more common case, we don't need to do that.
     if is_shutdown_in_progress() {
         return;
     }
-    
+
     let current_key = KEY.swap(c::FLS_OUT_OF_INDEXES, Ordering::AcqRel);
     if current_key != c::FLS_OUT_OF_INDEXES {
         unsafe { c::FlsFree(current_key) };
@@ -112,13 +112,12 @@ fn is_shutdown_in_progress() -> bool {
     unsafe { RtlDllShutdownInProgress() != 0 }
 }
 
-
 #[cfg(target_vendor = "win7")]
-fn is_shutdown_in_progress() -> bool { 
+fn is_shutdown_in_progress() -> bool {
     // `RtlDllShutdownInProgress` is unavailable before Windows 10,
     // so assume the process is shutting down and free the FLS key manually
     // to avoid a potential crash during DLL unloading.
-    true 
+    true
 }
 
 unsafe extern "system" fn cleanup(_ptr: *const c_void) {
