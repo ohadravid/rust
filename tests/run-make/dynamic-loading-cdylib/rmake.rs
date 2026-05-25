@@ -1,5 +1,5 @@
-// This test tries to check that dynamically loading and unloading cdylib libraries works,
-// both for simple libraries and for libraries that rely on the Rust runtime
+// Checks that dynamically loading and unloading cdylib libraries works,
+// both for simple functions and for functions that rely on the Rust runtime
 // (that use thread local storage with destructors).
 //
 // - `foo.rs` is a cdylib.
@@ -16,5 +16,14 @@ fn main() {
 
     let out_raw = run("load_and_unload_bin").stdout_utf8();
 
-    diff().expected_file("output.txt").actual_text("actual", out_raw).normalize(r#"\r"#, "").run();
+    #[cfg(windows)]
+    let output_filename = "output_windows.txt";
+    #[cfg(unix)]
+    let output_filename = "output_unix.txt";
+
+    diff()
+        .expected_file(output_filename)
+        .actual_text("actual", out_raw)
+        .normalize(r#"\r"#, "")
+        .run();
 }
