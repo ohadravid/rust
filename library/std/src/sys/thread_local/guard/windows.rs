@@ -9,7 +9,7 @@
 //!
 //! [1]: https://devblogs.microsoft.com/oldnewthing/20191011-00/?p=102989
 
-use core::ffi::{c_int, c_void};
+use core::ffi::c_void;
 use core::sync::atomic::{AtomicU32, Ordering};
 
 use crate::cell::Cell;
@@ -72,11 +72,11 @@ pub fn enable() {
             }
         };
 
-        // Handle DLL unloading gracefully by freeing the FLS key manually.
-        unsafe extern "C" {
-            pub fn atexit(cb: unsafe extern "C" fn()) -> c_int;
-        }
-        let _ = unsafe { atexit(free_fls_key_at_exit) };
+        // If the current DLL is unloaded, the registered `cleanup` hook will not be available later during thread exit,
+        // triggering a `STATUS_ACCESS_VIOLATION`. To avoid this, we use an `atexit` hook, which is called during DLL unload
+        // to manually free the FLS slot, triggering the destructors. This hook will also be called during normal process exit,
+        // which is fine because this is the correct time to run the destructors anyway.
+        let _ = unsafe { c::atexit(free_fls_key_at_exit) };
 
         // Setting the key's value to non-zero will cause the dtor callback to be called when the thread exits.
         // We only set the key once per thread, so the destructors are guaranteed to run at most once (fibers cannot be moved between threads).
@@ -85,39 +85,10 @@ pub fn enable() {
 }
 
 extern "C" fn free_fls_key_at_exit() {
-    // If the current DLL is unloaded, the registered `cleanup` hook will not be available later during thread exit,
-    // triggering a `STATUS_ACCESS_VIOLATION`.
-    // Manually free the FLS slot to avoid this.
-
-    // If the entire process is shutting down, which is the more common case, we don't need to do that.
-    if is_shutdown_in_progress() {
-        return;
-    }
-
     let current_key = KEY.swap(c::FLS_OUT_OF_INDEXES, Ordering::AcqRel);
     if current_key != c::FLS_OUT_OF_INDEXES {
         unsafe { c::FlsFree(current_key) };
     }
-}
-
-#[cfg(not(target_vendor = "win7"))]
-fn is_shutdown_in_progress() -> bool {
-    #[link(name = "ntdll")]
-    unsafe extern "system" {
-        /// Returns TRUE (non-zero) if the process is terminating.
-        /// Returns FALSE (0) if we are dynamically unloading a DLL.
-        pub fn RtlDllShutdownInProgress() -> u8;
-    }
-
-    unsafe { RtlDllShutdownInProgress() != 0 }
-}
-
-#[cfg(target_vendor = "win7")]
-fn is_shutdown_in_progress() -> bool {
-    // `RtlDllShutdownInProgress` is unavailable before Windows 10,
-    // so assume the process is shutting down and free the FLS key manually
-    // to avoid a potential crash during DLL unloading.
-    true
 }
 
 unsafe extern "system" fn cleanup(_ptr: *const c_void) {

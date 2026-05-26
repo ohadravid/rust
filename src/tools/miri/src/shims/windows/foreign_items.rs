@@ -146,6 +146,21 @@ pub trait EvalContextExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
         // BOOL = i32
         // BOOLEAN = u8
         match link_name.as_str() {
+            // stdlib-related shims
+            "atexit" => {
+                let [_value] = this.check_shim_sig(
+                    shim_sig!(extern "C" fn(*const _) -> winapi::c_int),
+                    link_name,
+                    abi,
+                    args,
+                )?;
+
+                // We do not support registering atexit handlers, so we return a error code.
+                // This is ignored by the thread-local destructor implementation in std,
+                // and because we also do not support manually unloading DLLs, it has no visible effect.
+                this.write_scalar(Scalar::from_u32(1), dest)?;
+            }
+
             // Environment related shims
             "GetEnvironmentVariableW" => {
                 // FIXME: This does not have a direct test (#3179).
